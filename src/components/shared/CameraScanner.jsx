@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Camera, Upload, X, CheckCircle, AlertCircle, Database } from 'lucide-react';
-import { geminiApi } from '../../api/geminiApi';
-import { matchScannedProduct, formatMatchResult } from '../../utils/productMatcher';
+import { Camera, Upload, X, CheckCircle, AlertCircle, Database, Barcode, Globe } from 'lucide-react';
+import { productScanner } from '../../api/productScanner';
 import { formatDaysUntilExpiry, getExpiryColor } from '../../utils/dateHelpers';
 
 /**
@@ -16,6 +15,9 @@ export default function CameraScanner({ products = [], onScanComplete }) {
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState(null);
   const [matchResult, setMatchResult] = useState(null);
+  const [barcodeInfo, setBarcodeInfo] = useState(null);
+  const [externalData, setExternalData] = useState(null);
+  const [strategies, setStrategies] = useState([]);
   const [error, setError] = useState(null);
 
   const handleFileUpload = async (event) => {
@@ -26,33 +28,33 @@ export default function CameraScanner({ products = [], onScanComplete }) {
     setError(null);
     setResult(null);
     setMatchResult(null);
+    setBarcodeInfo(null);
+    setExternalData(null);
+    setStrategies([]);
 
     try {
       console.log(`🔍 Scanning with database of ${products.length} products...`);
 
-      // Call Gemini Vision API with database context
-      const scanResult = await geminiApi.scanExpiryLabel(file, products);
+      // Call unified product scanner (tries barcode + OCR)
+      const scanResult = await productScanner.scan(file, products);
 
       if (scanResult.success) {
-        const scannedData = scanResult.data;
+        // Set all result data
+        setResult(scanResult.data);
+        setMatchResult(scanResult.matchResult);
+        setBarcodeInfo(scanResult.barcodeInfo);
+        setExternalData(scanResult.externalData);
+        setStrategies(scanResult.strategies);
 
-        // Match against database
-        const dbMatch = matchScannedProduct(scannedData, products);
-        const formattedMatch = formatMatchResult(dbMatch);
-
-        // Use enriched data for display
-        setResult(dbMatch.enrichedData || scannedData);
-        setMatchResult(formattedMatch);
-
-        console.log('📊 Match result:', formattedMatch);
-        console.log('🔍 Scanned:', scannedData);
-        console.log('✨ Enriched:', dbMatch.enrichedData);
+        console.log('✅ Scan complete:', scanResult);
 
         if (onScanComplete) {
           onScanComplete({
-            scanned: scannedData,
-            enriched: dbMatch.enrichedData,
-            match: formattedMatch
+            data: scanResult.data,
+            match: scanResult.matchResult,
+            barcode: scanResult.barcodeInfo,
+            external: scanResult.externalData,
+            strategies: scanResult.strategies
           });
         }
       } else {
@@ -68,6 +70,9 @@ export default function CameraScanner({ products = [], onScanComplete }) {
   const handleReset = () => {
     setResult(null);
     setMatchResult(null);
+    setBarcodeInfo(null);
+    setExternalData(null);
+    setStrategies([]);
     setError(null);
   };
 
@@ -101,7 +106,7 @@ export default function CameraScanner({ products = [], onScanComplete }) {
           </label>
 
           <p className="text-xs text-gray-400 mt-3">
-            AI Vision + Smart Database Matching powered by Gemini
+            Multi-Strategy AI: Barcode Detection + OCR + External Database + Fuzzy Matching
           </p>
         </div>
       )}
@@ -160,6 +165,80 @@ export default function CameraScanner({ products = [], onScanComplete }) {
               </div>
             )}
           </div>
+
+          {/* Detection Strategy Badges */}
+          {strategies.length > 0 && (
+            <div className="flex items-center space-x-2">
+              <span className="text-xs font-medium text-gray-600">Detection Methods:</span>
+              {strategies.map((strategy, idx) => (
+                <span
+                  key={idx}
+                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                    strategy === 'BARCODE'
+                      ? 'bg-purple-100 text-purple-700'
+                      : strategy === 'OCR'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'bg-gray-100 text-gray-700'
+                  }`}
+                >
+                  {strategy === 'BARCODE' && <Barcode className="w-3 h-3 mr-1" />}
+                  {strategy === 'OCR' && <Camera className="w-3 h-3 mr-1" />}
+                  {strategy}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Barcode Information */}
+          {barcodeInfo && (
+            <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+              <div className="flex items-center space-x-2 mb-2">
+                <Barcode className="w-5 h-5 text-purple-600" />
+                <h5 className="text-sm font-bold text-purple-900">Barcode Detected</h5>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="text-purple-700 font-medium">Value:</span>
+                  <span className="ml-2 font-mono text-purple-900">{barcodeInfo.value}</span>
+                </div>
+                <div>
+                  <span className="text-purple-700 font-medium">Format:</span>
+                  <span className="ml-2 text-purple-900">{barcodeInfo.format}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* External API Data */}
+          {externalData && (
+            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+              <div className="flex items-center space-x-2 mb-3">
+                <Globe className="w-5 h-5 text-blue-600" />
+                <h5 className="text-sm font-bold text-blue-900">External Product Database</h5>
+              </div>
+              <div className="space-y-2">
+                <div className="bg-white rounded p-2">
+                  <span className="text-xs text-blue-700 font-medium">Product Name:</span>
+                  <p className="text-sm text-blue-900 font-medium mt-1">{externalData.product_name}</p>
+                </div>
+                {externalData.brands && externalData.brands !== 'Unknown' && (
+                  <div className="bg-white rounded p-2">
+                    <span className="text-xs text-blue-700 font-medium">Brand:</span>
+                    <p className="text-sm text-blue-900 mt-1">{externalData.brands}</p>
+                  </div>
+                )}
+                {externalData.quantity && (
+                  <div className="bg-white rounded p-2">
+                    <span className="text-xs text-blue-700 font-medium">Quantity:</span>
+                    <p className="text-sm text-blue-900 mt-1">{externalData.quantity}</p>
+                  </div>
+                )}
+                <p className="text-xs text-blue-600 mt-2">
+                  ℹ️ Data from Open Food Facts - matched against local inventory
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Scanned Data */}
           <div className="bg-white rounded-lg p-4 border border-gray-200">

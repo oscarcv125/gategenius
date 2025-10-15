@@ -23,7 +23,8 @@ export default function ExpiryDashboard() {
     getCriticalItems,
     getWarningItems,
     getWasteStats,
-    removeProduct
+    removeProduct,
+    addScannedProduct
   } = useExpiryStore();
 
   useEffect(() => {
@@ -156,9 +157,21 @@ export default function ExpiryDashboard() {
       {/* Camera Scanner */}
       <CameraScanner
         products={products}
-        onScanComplete={(data) => {
-          console.log('Scanned product:', data);
-          // Hermann can add logic to add this to the store
+        onScanComplete={(scanData) => {
+          console.log('📦 Scan complete:', scanData);
+
+          // Add to inventory if high confidence (≥80%)
+          if (scanData.match && scanData.match.confidence >= 80 && scanData.data) {
+            addScannedProduct(scanData.data);
+            console.log('✅ Product added to inventory (confidence: ' + scanData.match.confidence + '%)');
+          } else if (scanData.match && scanData.match.confidence < 80) {
+            console.log('⚠️ Low confidence (' + scanData.match.confidence + '%) - manual verification recommended');
+          }
+
+          // Show strategies used
+          if (scanData.strategies && scanData.strategies.length > 0) {
+            console.log('🔍 Detection methods used:', scanData.strategies.join(', '));
+          }
         }}
       />
 

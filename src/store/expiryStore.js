@@ -41,6 +41,55 @@ export const useExpiryStore = create((set, get) => ({
     }));
   },
 
+  /**
+   * Add a scanned product to the inventory
+   * @param {Object} scannedData - Product data from scanner
+   */
+  addScannedProduct: (scannedData) => {
+    set((state) => {
+      // Check if product already exists (by LOT_Number + Product_ID)
+      const exists = state.products.some(
+        p => p.LOT_Number === scannedData.LOT_Number &&
+             p.Product_ID === scannedData.Product_ID
+      );
+
+      if (exists) {
+        console.log('⚠️ Product already exists in database');
+        return state; // No change
+      }
+
+      // Calculate days until expiry
+      const calculateDays = (expiryDate) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const expiry = new Date(expiryDate);
+        expiry.setHours(0, 0, 0, 0);
+        const diffTime = expiry - today;
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      };
+
+      // Add new product with calculated fields
+      const newProduct = {
+        Product_ID: scannedData.Product_ID || 'SCANNED',
+        Product_Name: scannedData.Product_Name || 'Scanned Product',
+        Weight_or_Volume: scannedData.Weight_or_Volume || '',
+        LOT_Number: scannedData.LOT_Number || 'Unknown',
+        Expiry_Date: scannedData.Expiry_Date || 'Unknown',
+        Quantity: parseInt(scannedData.Quantity) || 1,
+        Expiry_Date_Parsed: new Date(scannedData.Expiry_Date),
+        Days_Until_Expiry: calculateDays(scannedData.Expiry_Date),
+        _scanned: true, // Flag to identify scanned products
+        _scan_timestamp: new Date().toISOString()
+      };
+
+      console.log('✅ Added scanned product to inventory:', newProduct);
+
+      return {
+        products: [...state.products, newProduct]
+      };
+    });
+  },
+
   // Computed/Selector functions
 
   /**
