@@ -155,6 +155,7 @@ export default function ExpiryDashboard() {
 
       {/* Camera Scanner */}
       <CameraScanner
+        products={products}
         onScanComplete={(data) => {
           console.log('Scanned product:', data);
           // Hermann can add logic to add this to the store

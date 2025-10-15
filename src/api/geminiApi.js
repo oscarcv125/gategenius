@@ -15,8 +15,8 @@
 class GeminiAPI {
   constructor() {
     this.apiKey = import.meta.env.VITE_GEMINI_API_KEY || null;
-    this.visionEndpoint = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent';
-    this.textEndpoint = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent';
+    this.visionEndpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+    this.textEndpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
   }
 
   /**

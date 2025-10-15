@@ -35,18 +35,23 @@ export default function CameraScanner({ products = [], onScanComplete }) {
 
       if (scanResult.success) {
         const scannedData = scanResult.data;
-        setResult(scannedData);
 
         // Match against database
         const dbMatch = matchScannedProduct(scannedData, products);
         const formattedMatch = formatMatchResult(dbMatch);
+
+        // Use enriched data for display
+        setResult(dbMatch.enrichedData || scannedData);
         setMatchResult(formattedMatch);
 
         console.log('📊 Match result:', formattedMatch);
+        console.log('🔍 Scanned:', scannedData);
+        console.log('✨ Enriched:', dbMatch.enrichedData);
 
         if (onScanComplete) {
           onScanComplete({
             scanned: scannedData,
+            enriched: dbMatch.enrichedData,
             match: formattedMatch
           });
         }
@@ -158,25 +163,50 @@ export default function CameraScanner({ products = [], onScanComplete }) {
 
           {/* Scanned Data */}
           <div className="bg-white rounded-lg p-4 border border-gray-200">
-            <h5 className="text-sm font-bold text-gray-700 mb-3">📸 Scanned from Image:</h5>
+            <h5 className="text-sm font-bold text-gray-700 mb-3">📸 Extracted Information:</h5>
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-50 rounded p-2">
-                <p className="text-xs text-gray-600">Product ID</p>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs text-gray-600">Product ID</p>
+                  {result._enriched_ID && (
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Auto-filled</span>
+                  )}
+                </div>
                 <p className="font-medium text-gray-900">{result.Product_ID}</p>
               </div>
               <div className="bg-gray-50 rounded p-2">
-                <p className="text-xs text-gray-600">LOT Number</p>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs text-gray-600">LOT Number</p>
+                  {result._enriched_LOT && (
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Auto-filled</span>
+                  )}
+                </div>
                 <p className="font-medium text-gray-900">{result.LOT_Number}</p>
               </div>
               <div className="bg-gray-50 rounded p-2">
-                <p className="text-xs text-gray-600">Product Name</p>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs text-gray-600">Product Name</p>
+                  {result._enriched_Name && (
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Auto-filled</span>
+                  )}
+                </div>
                 <p className="font-medium text-gray-900">{result.Product_Name}</p>
               </div>
               <div className="bg-gray-50 rounded p-2">
-                <p className="text-xs text-gray-600">Expiry Date</p>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs text-gray-600">Expiry Date</p>
+                  {result._enriched_Date && (
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Auto-filled</span>
+                  )}
+                </div>
                 <p className="font-medium text-red-600">{result.Expiry_Date}</p>
               </div>
             </div>
+            {(result._enriched_LOT || result._enriched_ID || result._enriched_Name || result._enriched_Date) && (
+              <p className="text-xs text-blue-600 mt-3 bg-blue-50 p-2 rounded">
+                💡 Some fields were auto-filled from database match
+              </p>
+            )}
           </div>
 
           {/* Database Matches */}

@@ -32,13 +32,15 @@ function stringSimilarity(str1, str2) {
 
 /**
  * Match scanned data against products database
+ * Also enriches scanned data with missing fields from database
  */
 export function matchScannedProduct(scannedData, productsDatabase) {
   if (!productsDatabase || productsDatabase.length === 0) {
     return {
       matches: [],
       matchType: 'NO_DATABASE',
-      confidence: 0
+      confidence: 0,
+      enrichedData: scannedData
     };
   }
 
@@ -52,6 +54,7 @@ export function matchScannedProduct(scannedData, productsDatabase) {
   let matches = [];
   let matchType = 'NONE';
   let confidence = 0;
+  let enrichedData = { ...scannedData };
 
   // Priority 1: Exact Product ID match
   if (Product_ID && Product_ID !== 'Unknown') {
@@ -126,11 +129,41 @@ export function matchScannedProduct(scannedData, productsDatabase) {
     }
   }
 
+  // Enrich scanned data with missing fields from best match
+  if (matches.length > 0) {
+    const bestMatch = matches[0];
+
+    // Fill in missing LOT Number
+    if ((!LOT_Number || LOT_Number === 'Unknown') && bestMatch.LOT_Number) {
+      enrichedData.LOT_Number = bestMatch.LOT_Number;
+      enrichedData._enriched_LOT = true;
+    }
+
+    // Fill in missing Product ID
+    if ((!Product_ID || Product_ID === 'Unknown') && bestMatch.Product_ID) {
+      enrichedData.Product_ID = bestMatch.Product_ID;
+      enrichedData._enriched_ID = true;
+    }
+
+    // Fill in missing Product Name
+    if ((!Product_Name || Product_Name === 'Unknown') && bestMatch.Product_Name) {
+      enrichedData.Product_Name = bestMatch.Product_Name;
+      enrichedData._enriched_Name = true;
+    }
+
+    // Fill in missing Expiry Date
+    if ((!Expiry_Date || Expiry_Date === 'Unknown') && bestMatch.Expiry_Date) {
+      enrichedData.Expiry_Date = bestMatch.Expiry_Date;
+      enrichedData._enriched_Date = true;
+    }
+  }
+
   return {
     matches,
     matchType,
     confidence,
-    scannedData
+    scannedData,
+    enrichedData
   };
 }
 
