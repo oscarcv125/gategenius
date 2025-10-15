@@ -75,7 +75,7 @@ export default function ConsumptionDashboard() {
     <div className="space-y-6">
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="card">
+        <div className="card select-none">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Waste Cost</p>
@@ -90,7 +90,7 @@ export default function ConsumptionDashboard() {
           </div>
         </div>
 
-        <div className="card">
+        <div className="card select-none">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-gray-600">Returned Units</p>
@@ -103,7 +103,7 @@ export default function ConsumptionDashboard() {
           </div>
         </div>
 
-        <div className="card">
+        <div className="card select-none">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-gray-600">Avg Consumption</p>
@@ -116,7 +116,7 @@ export default function ConsumptionDashboard() {
           </div>
         </div>
 
-        <div className="card">
+        <div className="card select-none">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-gray-600">Flights Analyzed</p>
@@ -139,7 +139,7 @@ export default function ConsumptionDashboard() {
 
       {/* Flight Predictions */}
       {selectedFlight && flightPredictions && (
-        <div className="card bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200">
+        <div className="card bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 select-none">
           <h3 className="text-xl font-bold text-gray-900 mb-4">
             Flight {selectedFlight.Flight_ID} - Consumption Predictions
           </h3>
@@ -223,7 +223,7 @@ export default function ConsumptionDashboard() {
 
       {/* High Waste Products */}
       {highWasteProducts.length > 0 && (
-        <div className="card">
+        <div className="card select-none">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-lg font-bold text-gray-900">High Waste Products</h3>
@@ -265,7 +265,7 @@ export default function ConsumptionDashboard() {
 
       {/* Stockout Risk Products */}
       {stockoutRiskProducts.length > 0 && (
-        <div className="card">
+        <div className="card select-none">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-lg font-bold text-gray-900">Stockout Risk Products</h3>

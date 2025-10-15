@@ -80,7 +80,7 @@ export default function ExpiryDashboard() {
 
       {/* Critical Alerts */}
       {criticalItems.length > 0 && (
-        <div className="alert-danger">
+        <div className="alert-danger select-none">
           <div className="flex items-start">
             <AlertTriangle className="w-6 h-6 text-red-600 mt-0.5" />
             <div className="ml-3 flex-1">
@@ -123,7 +123,7 @@ export default function ExpiryDashboard() {
 
       {/* Warning Alerts */}
       {warningItems.length > 0 && (
-        <div className="alert-warning">
+        <div className="alert-warning select-none">
           <div className="flex items-start">
             <Calendar className="w-6 h-6 text-yellow-600 mt-0.5" />
             <div className="ml-3 flex-1">
@@ -189,7 +189,7 @@ function StatCard({ title, value, subtitle, icon: Icon, color }) {
   };
 
   return (
-    <div className="card">
+    <div className="card select-none">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm text-gray-600">{title}</p>

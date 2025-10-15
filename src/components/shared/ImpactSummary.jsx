@@ -20,7 +20,7 @@ export default function ImpactSummary({ summary }) {
   const globalSavings = savingsPerYear * 200; // 200 facilities
 
   return (
-    <div className="card bg-gradient-to-br from-purple-600 to-blue-600 text-white">
+    <div className="card bg-gradient-to-br from-purple-600 to-blue-600 text-white select-none">
       <div className="mb-6">
         <h3 className="text-2xl font-bold mb-2">Global Impact Projection</h3>
         <p className="text-purple-100">Based on this optimization scaled globally</p>

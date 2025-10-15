@@ -46,7 +46,7 @@ export default function ProductivityDashboard() {
     <div className="space-y-6">
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="card">
+        <div className="card select-none">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Drawers</p>
@@ -59,7 +59,7 @@ export default function ProductivityDashboard() {
           </div>
         </div>
 
-        <div className="card">
+        <div className="card select-none">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Time</p>
@@ -72,7 +72,7 @@ export default function ProductivityDashboard() {
           </div>
         </div>
 
-        <div className="card">
+        <div className="card select-none">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-gray-600">Workers Needed</p>
@@ -85,7 +85,7 @@ export default function ProductivityDashboard() {
           </div>
         </div>
 
-        <div className="card">
+        <div className="card select-none">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-gray-600">Utilization</p>
@@ -102,7 +102,7 @@ export default function ProductivityDashboard() {
       </div>
 
       {/* Workforce Plan Card */}
-      <div className="card bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200">
+      <div className="card bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 select-none">
         <div className="flex items-start justify-between mb-4">
           <div>
             <h3 className="text-xl font-bold text-gray-900">TODAY'S WORKFORCE PLAN</h3>
@@ -139,7 +139,7 @@ export default function ProductivityDashboard() {
       <PeakTimeChart data={peakTimes} />
 
       {/* Peak Times Details */}
-      <div className="card">
+      <div className="card select-none">
         <h3 className="text-lg font-bold text-gray-900 mb-4">Peak Time Details</h3>
         <div className="space-y-3">
           {peakTimes.map((peak, idx) => (
@@ -171,7 +171,7 @@ export default function ProductivityDashboard() {
       </div>
 
       {/* Complexity Breakdown */}
-      <div className="card">
+      <div className="card select-none">
         <h3 className="text-lg font-bold text-gray-900 mb-4">Complexity Breakdown</h3>
         <div className="space-y-3">
           <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">

@@ -126,7 +126,7 @@ export default function SmartAssignmentDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="card bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200">
+      <div className="card bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 select-none">
         <div className="flex items-start space-x-4">
           <div className="p-4 bg-purple-600 rounded-xl">
             <Zap className="w-8 h-8 text-white" />
@@ -156,7 +156,7 @@ export default function SmartAssignmentDashboard() {
 
       {/* Flight Selector */}
       <div className="card">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Select Flight</h3>
+        <h3 className="text-lg font-bold text-gray-900 mb-4 select-none">Select Flight</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {flights.slice(0, 6).map((flight) => (
             <button
@@ -190,7 +190,7 @@ export default function SmartAssignmentDashboard() {
           <ImpactSummary summary={assignment.summary} />
 
           {/* Summary Card */}
-          <div className="card bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200">
+          <div className="card bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 select-none">
             <h3 className="text-xl font-bold text-gray-900 mb-4">
               Flight {assignment.flight_id} - Smart Optimization
             </h3>
@@ -245,12 +245,12 @@ export default function SmartAssignmentDashboard() {
 
           {/* Product Recommendations */}
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-gray-900">Product Recommendations</h3>
+            <h3 className="text-lg font-bold text-gray-900 select-none">Product Recommendations</h3>
 
             {assignment.recommendations.slice(0, 5).map((rec) => (
               <div
                 key={rec.product_id}
-                className="card border-l-4 border-purple-500"
+                className="card border-l-4 border-purple-500 select-none"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div>
@@ -327,7 +327,7 @@ export default function SmartAssignmentDashboard() {
 
           {/* Success Message */}
           {showSuccessMessage && (
-            <div className="card bg-green-50 border-2 border-green-300 animate-fade-in">
+            <div className="card bg-green-50 border-2 border-green-300 animate-fade-in select-none">
               <div className="flex items-center space-x-3">
                 <CheckCircle className="w-6 h-6 text-green-600" />
                 <div>
@@ -341,7 +341,7 @@ export default function SmartAssignmentDashboard() {
           )}
 
           {/* Approve Button */}
-          <div className={`card ${isApproved ? 'bg-green-50 border-2 border-green-300' : 'bg-purple-50 border-2 border-purple-300'}`}>
+          <div className={`card select-none ${isApproved ? 'bg-green-50 border-2 border-green-300' : 'bg-purple-50 border-2 border-purple-300'}`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-bold text-gray-900">
