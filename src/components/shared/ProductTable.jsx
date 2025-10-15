@@ -1,15 +1,18 @@
-import { useState } from 'react';
-import { ChevronDown, ChevronUp, Search, X } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { ChevronDown, ChevronUp, Search, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { formatDaysUntilExpiry, getExpiryColor, isExpired } from '../../utils/dateHelpers';
 
 /**
  * Product Table Component
- * Displays products in a sortable, filterable table
+ * Displays products in a sortable, filterable table with pagination
  */
 export default function ProductTable({ products, onRemoveProduct }) {
+  const tableTopRef = useRef(null);
   const [sortField, setSortField] = useState('Days_Until_Expiry');
   const [sortDirection, setSortDirection] = useState('asc');
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
 
   // Filter products
   const filteredProducts = products.filter(product => {
@@ -46,6 +49,32 @@ export default function ProductTable({ products, onRemoveProduct }) {
       setSortField(field);
       setSortDirection('asc');
     }
+    setCurrentPage(1); // Reset to first page when sorting
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedProducts = sortedProducts.slice(startIndex, endIndex);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      // Scroll to top of table
+      tableTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to first page
+  };
+
+  // Reset to first page when search term changes
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
   };
 
   const SortIcon = ({ field }) => {
@@ -62,7 +91,7 @@ export default function ProductTable({ products, onRemoveProduct }) {
   };
 
   return (
-    <div className="card">
+    <div className="card" ref={tableTopRef}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold text-gray-900">All Products</h3>
         <div className="relative">
@@ -71,14 +100,31 @@ export default function ProductTable({ products, onRemoveProduct }) {
             type="text"
             placeholder="Search products, LOT..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
             className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           />
         </div>
       </div>
 
-      <div className="text-sm text-gray-600 mb-3">
-        Showing {sortedProducts.length} of {products.length} products
+      <div className="flex items-center justify-between mb-3">
+        <div className="text-sm text-gray-600 select-none">
+          Showing {startIndex + 1}-{Math.min(endIndex, sortedProducts.length)} of {sortedProducts.length} products
+          {sortedProducts.length !== products.length && ` (filtered from ${products.length})`}
+        </div>
+        <div className="flex items-center space-x-2">
+          <label htmlFor="itemsPerPage" className="text-sm text-gray-600">Items per page:</label>
+          <select
+            id="itemsPerPage"
+            value={itemsPerPage}
+            onChange={handleItemsPerPageChange}
+            className="border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          >
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+          </select>
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -145,27 +191,27 @@ export default function ProductTable({ products, onRemoveProduct }) {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {sortedProducts.slice(0, 50).map((product, idx) => {
+            {paginatedProducts.map((product, idx) => {
               const expired = isExpired(product.Days_Until_Expiry);
               return (
                 <tr key={idx} className={`hover:bg-gray-50 ${expired ? 'bg-gray-50' : ''}`}>
-                  <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900 select-none">
                     {product.Product_ID}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-700">
+                  <td className="px-4 py-3 text-sm text-gray-700 select-none">
                     {product.Product_Name}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-700">
+                  <td className="px-4 py-3 text-sm text-gray-700 select-none">
                     {product.LOT_Number}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-700">
+                  <td className="px-4 py-3 text-sm text-gray-700 select-none">
                     {product.Expiry_Date}
                   </td>
-                  <td className={`px-4 py-3 text-sm ${getExpiryColor(product.Days_Until_Expiry)}`}>
+                  <td className={`px-4 py-3 text-sm select-none ${getExpiryColor(product.Days_Until_Expiry)}`}>
                     {formatDaysUntilExpiry(product.Days_Until_Expiry)}
                     {expired && <span className="ml-2 text-xs">(Expired)</span>}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-900 font-medium">
+                  <td className="px-4 py-3 text-sm text-gray-900 font-medium select-none">
                     {product.Quantity}
                   </td>
                   <td className="px-4 py-3 text-sm">
@@ -186,15 +232,73 @@ export default function ProductTable({ products, onRemoveProduct }) {
         </table>
       </div>
 
-      {sortedProducts.length > 50 && (
-        <div className="mt-4 text-center text-sm text-gray-600">
-          Showing first 50 results. Use search to narrow down.
-        </div>
-      )}
-
       {sortedProducts.length === 0 && (
         <div className="text-center py-8 text-gray-500">
           No products found matching "{searchTerm}"
+        </div>
+      )}
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between border-t pt-4">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            <span>Previous</span>
+          </button>
+
+          <div className="flex items-center space-x-2">
+            {/* Page numbers */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+              // Show first page, last page, current page, and pages around current
+              const showPage =
+                page === 1 ||
+                page === totalPages ||
+                (page >= currentPage - 1 && page <= currentPage + 1);
+
+              // Show ellipsis
+              const showEllipsisBefore = page === currentPage - 2 && currentPage > 3;
+              const showEllipsisAfter = page === currentPage + 2 && currentPage < totalPages - 2;
+
+              if (!showPage && !showEllipsisBefore && !showEllipsisAfter) {
+                return null;
+              }
+
+              if (showEllipsisBefore || showEllipsisAfter) {
+                return (
+                  <span key={page} className="px-2 text-gray-500">
+                    ...
+                  </span>
+                );
+              }
+
+              return (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`px-3 py-1 rounded ${
+                    currentPage === page
+                      ? 'bg-primary-600 text-white font-medium'
+                      : 'border border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  {page}
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
+          >
+            <span>Next</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       )}
     </div>

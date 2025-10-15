@@ -3,7 +3,6 @@ import { dataService } from '../services/dataService';
 
 /**
  * Expiry Store - Manages expiration tracking state
- * Owner: Abel (state) + Hermann (UI integration)
  *
  * This store handles:
  * - Loading expiration data

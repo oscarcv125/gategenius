@@ -2,7 +2,6 @@ import { Calendar, TrendingUp, Users, Zap } from 'lucide-react';
 
 /**
  * Navigation Component
- * Owner: Oscar
  */
 export default function Navigation({ activeTab, onTabChange }) {
   const tabs = [
@@ -11,32 +10,28 @@ export default function Navigation({ activeTab, onTabChange }) {
       name: 'Expiration Intelligence',
       icon: Calendar,
       color: 'text-red-600',
-      bgColor: 'bg-red-50',
-      owner: 'Hermann'
+      bgColor: 'bg-red-50'
     },
     {
       id: 'consumption',
       name: 'Consumption Prediction',
       icon: TrendingUp,
       color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
-      owner: 'Diego'
+      bgColor: 'bg-blue-50'
     },
     {
       id: 'productivity',
       name: 'Workforce Planning',
       icon: Users,
       color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      owner: 'Oscar'
+      bgColor: 'bg-green-50'
     },
     {
       id: 'integration',
       name: 'Smart Assignment',
       icon: Zap,
       color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
-      owner: 'Oscar'
+      bgColor: 'bg-purple-50'
     }
   ];
 
@@ -63,11 +58,6 @@ export default function Navigation({ activeTab, onTabChange }) {
               >
                 <Icon className="w-5 h-5" />
                 <span>{tab.name}</span>
-                {isActive && (
-                  <span className={`px-2 py-0.5 text-xs rounded-full ${tab.bgColor} ${tab.color}`}>
-                    {tab.owner}
-                  </span>
-                )}
               </button>
             );
           })}

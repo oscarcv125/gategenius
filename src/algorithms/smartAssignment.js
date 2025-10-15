@@ -1,6 +1,5 @@
 /**
  * Smart Flight Assignment Algorithm
- * Owner: Abel (algorithm) + Oscar (UI integration)
  *
  * THE KILLER FEATURE!
  *

@@ -3,7 +3,6 @@ import { dataService } from '../services/dataService';
 
 /**
  * Consumption Store - Manages consumption prediction state
- * Owner: Abel (state) + Diego (UI integration)
  *
  * This store handles:
  * - Loading consumption data

@@ -3,7 +3,6 @@ import { dataService } from '../services/dataService';
 
 /**
  * Productivity Store - Manages workforce planning state
- * Owner: Abel (state) + Oscar (UI integration)
  *
  * This store handles:
  * - Loading drawer/productivity data
@@ -176,10 +175,10 @@ export const useProductivityStore = create((set, get) => ({
   },
 
   /**
-   * Simulate peak time analysis (mock - Oscar will enhance)
+   * Simulate peak time analysis (mock data)
    */
   getPeakTimes: () => {
-    // Mock peak times - Oscar will integrate with real flight schedule
+    // Mock peak times - to be integrated with real flight schedule
     return [
       { time: '09:00-11:00', drawers: 78, workers_needed: 5 },
       { time: '14:00-16:00', drawers: 92, workers_needed: 6 },

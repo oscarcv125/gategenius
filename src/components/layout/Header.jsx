@@ -2,7 +2,6 @@ import { Plane, AlertCircle } from 'lucide-react';
 
 /**
  * Header Component
- * Owner: Oscar
  */
 export default function Header() {
   return (

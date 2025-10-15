@@ -2,7 +2,6 @@ import Papa from 'papaparse';
 
 /**
  * Data Service - Handles parsing and loading all CSV data
- * Owner: Abel
  *
  * This service provides functions to load and parse the three main datasets:
  * - Expiration data

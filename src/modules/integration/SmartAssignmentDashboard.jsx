@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useExpiryStore } from '../../store/expiryStore';
 import { useConsumptionStore } from '../../store/consumptionStore';
-import { Zap, TrendingUp, Calendar, Clock, DollarSign, CheckCircle } from 'lucide-react';
+import { Zap, TrendingUp, Calendar, Clock, DollarSign, CheckCircle, Download } from 'lucide-react';
 import { generateSmartFlightAssignment } from '../../algorithms/smartAssignment';
 import ImpactSummary from '../../components/shared/ImpactSummary';
 
 /**
  * Smart Flight Assignment Dashboard
- * Owner: Oscar
  *
  * THE KILLER FEATURE!
  *
@@ -23,6 +22,8 @@ export default function SmartAssignmentDashboard() {
 
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [assignment, setAssignment] = useState(null);
+  const [isApproved, setIsApproved] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   useEffect(() => {
     expiryStore.loadData();
@@ -41,6 +42,8 @@ export default function SmartAssignmentDashboard() {
 
   const handleFlightSelect = (flight) => {
     setSelectedFlight(flight);
+    setIsApproved(false);
+    setShowSuccessMessage(false);
 
     // Generate smart assignment
     const result = generateSmartFlightAssignment(
@@ -51,6 +54,60 @@ export default function SmartAssignmentDashboard() {
     );
 
     setAssignment(result);
+  };
+
+  const handleApproveAndGenerate = () => {
+    if (!assignment) return;
+
+    // Mark as approved
+    setIsApproved(true);
+    setShowSuccessMessage(true);
+
+    // Auto-hide success message after 5 seconds
+    setTimeout(() => {
+      setShowSuccessMessage(false);
+    }, 5000);
+
+    // Generate and download loading list
+    generateLoadingListCSV(assignment);
+  };
+
+  const generateLoadingListCSV = (assignment) => {
+    // Generate CSV content
+    const headers = ['Product ID', 'Product Name', 'Quantity', 'LOT Number', 'Expiry Date', 'Location', 'Special Instructions'];
+    const rows = assignment.recommendations.map(rec => [
+      rec.product_id,
+      rec.product_name,
+      rec.recommended_qty,
+      rec.selected_lot || 'Standard',
+      rec.days_until_expiry ? `Expires in ${rec.days_until_expiry} days` : 'N/A',
+      'Main Storage',
+      rec.use_near_expiry ? '⚠️ NEAR EXPIRY - Use First' : 'Standard Loading'
+    ]);
+
+    // Build CSV
+    const csvContent = [
+      `Flight Loading List - ${assignment.flight_id}`,
+      `Generated: ${new Date().toLocaleString()}`,
+      `Total Items: ${assignment.recommendations.length}`,
+      `Total Savings: $${assignment.summary.total_savings}`,
+      '',
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+
+    // Create download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+
+    link.setAttribute('href', url);
+    link.setAttribute('download', `LoadingList_${assignment.flight_id}_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const loading = expiryStore.loading || consumptionStore.loading;
@@ -268,19 +325,54 @@ export default function SmartAssignmentDashboard() {
             ))}
           </div>
 
+          {/* Success Message */}
+          {showSuccessMessage && (
+            <div className="card bg-green-50 border-2 border-green-300 animate-fade-in">
+              <div className="flex items-center space-x-3">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+                <div>
+                  <p className="font-bold text-green-900">Assignment Approved!</p>
+                  <p className="text-sm text-green-700 mt-1">
+                    Loading list for Flight {assignment.flight_id} has been generated and downloaded.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Approve Button */}
-          <div className="card bg-purple-50 border-2 border-purple-300">
+          <div className={`card ${isApproved ? 'bg-green-50 border-2 border-green-300' : 'bg-purple-50 border-2 border-purple-300'}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-bold text-gray-900">Ready to approve this assignment?</p>
+                <p className="font-bold text-gray-900">
+                  {isApproved ? 'Assignment Approved' : 'Ready to approve this assignment?'}
+                </p>
                 <p className="text-sm text-gray-600 mt-1">
-                  This will generate the loading list for Flight {assignment.flight_id}
+                  {isApproved
+                    ? `Loading list for Flight ${assignment.flight_id} is ready for warehouse`
+                    : `This will generate the loading list for Flight ${assignment.flight_id}`
+                  }
                 </p>
               </div>
-              <button className="btn-primary bg-purple-600 hover:bg-purple-700">
-                <CheckCircle className="w-4 h-4 inline mr-2" />
-                Approve & Generate Loading List
-              </button>
+              <div className="flex space-x-3">
+                {isApproved && (
+                  <button
+                    onClick={() => generateLoadingListCSV(assignment)}
+                    className="btn-secondary"
+                  >
+                    <Download className="w-4 h-4 inline mr-2" />
+                    Download Again
+                  </button>
+                )}
+                <button
+                  onClick={handleApproveAndGenerate}
+                  disabled={isApproved}
+                  className={`btn-primary ${isApproved ? 'bg-green-600 hover:bg-green-700' : 'bg-purple-600 hover:bg-purple-700'} disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <CheckCircle className="w-4 h-4 inline mr-2" />
+                  {isApproved ? 'Approved' : 'Approve & Generate Loading List'}
+                </button>
+              </div>
             </div>
           </div>
         </>

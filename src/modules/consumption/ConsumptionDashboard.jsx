@@ -6,7 +6,6 @@ import ConsumptionChart from '../../components/shared/ConsumptionChart';
 
 /**
  * Consumption Intelligence Dashboard
- * Owner: Diego
  *
  * Features:
  * - Flight consumption predictions

@@ -7,7 +7,6 @@ import { formatDaysUntilExpiry } from '../../utils/dateHelpers';
 
 /**
  * Expiration Intelligence Dashboard
- * Owner: Hermann
  *
  * Features:
  * - Critical expiry alerts (expiring today)

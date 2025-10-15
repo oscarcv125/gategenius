@@ -1,12 +1,11 @@
 /**
  * Gemini API Wrapper
- * Owner: Abel
  *
  * This module handles all Gemini AI API calls:
  * - Vision API for scanning expiry dates from labels
  * - Text API for consumption predictions
  *
- * TODO (Abel): Replace mock responses with real Gemini API calls
+ * TODO: Replace mock responses with real Gemini API calls
  * - Add API key from .env
  * - Implement vision scanning
  * - Implement consumption prediction
@@ -155,7 +154,7 @@ If you cannot find a field with certainty, use "Unknown" as the value. Return ON
    * @returns {Promise<Object>} AI-powered consumption prediction
    */
   async predictConsumption(flightData, historicalData) {
-    // MOCK IMPLEMENTATION - Abel will replace with real API call
+    // MOCK IMPLEMENTATION - To be replaced with real API call
     console.log('🤖 [MOCK] Predicting consumption...', flightData);
 
     await this.delay(1000);
@@ -185,7 +184,7 @@ If you cannot find a field with certainty, use "Unknown" as the value. Return ON
   }
 
   /**
-   * Real implementation template (for Abel)
+   * Real implementation template
    */
   async predictConsumptionReal(flightData, historicalData) {
     if (!this.apiKey) {

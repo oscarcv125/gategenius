@@ -5,7 +5,6 @@ import PeakTimeChart from '../../components/shared/PeakTimeChart';
 
 /**
  * Workforce Productivity Dashboard
- * Owner: Oscar
  *
  * Features:
  * - Workers needed calculation

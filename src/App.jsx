@@ -7,12 +7,6 @@ import SmartAssignmentDashboard from './modules/integration/SmartAssignmentDashb
 /**
  * GateGenius - AI-Powered Airline Catering Intelligence Platform
  * HackMTY 2025
- *
- * Team:
- * - Abel: Data services, API integration, Zustand stores, algorithms
- * - Hermann: Module 1 (Expiration Intelligence)
- * - Diego: Module 2 (Consumption Prediction)
- * - Oscar: Module 3 (Productivity) + Integration + Layout
  */
 function App() {
   return (

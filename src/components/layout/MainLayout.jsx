@@ -4,7 +4,6 @@ import Navigation from './Navigation';
 
 /**
  * Main Layout Component
- * Owner: Oscar
  */
 export default function MainLayout({ children }) {
   const [activeTab, setActiveTab] = useState('expiry');
@@ -40,7 +39,7 @@ export default function MainLayout({ children }) {
           <div className="text-center text-sm text-gray-500">
             <p>GateGenius v1.0 - HackMTY 2025</p>
             <p className="text-xs mt-1">
-              Team: Abel (Data) | Hermann (Expiry) | Diego (Consumption) | Oscar (Integration)
+              AI-Powered Airline Catering Intelligence Platform
             </p>
           </div>
         </div>
