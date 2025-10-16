@@ -152,7 +152,7 @@ export default function ConsumptionDashboard() {
 
       {/* Flight Selector */}
       <FlightSelector
-        flights={uniqueFlights.slice(0, 12)}
+        flights={uniqueFlights}
         selectedFlight={selectedFlight}
         onSelect={setSelectedFlight}
       />
