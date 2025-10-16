@@ -63,8 +63,8 @@ export default function ExpiryDashboard() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading expiration data...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 dark:border-primary-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading expiration data...</p>
         </div>
       </div>
     );
@@ -135,10 +135,10 @@ export default function ExpiryDashboard() {
       {criticalItems.length > 0 && (
         <div className="alert-danger select-none">
           <div className="flex items-start">
-            <AlertTriangle className="w-6 h-6 text-red-600 mt-0.5" />
+            <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400 mt-0.5" />
             <div className="ml-3 flex-1">
-              <h3 className="text-lg font-bold text-red-900">CRITICAL EXPIRY ALERTS</h3>
-              <p className="text-sm text-red-700 mt-1">
+              <h3 className="text-lg font-bold text-red-900 dark:text-red-200">CRITICAL EXPIRY ALERTS</h3>
+              <p className="text-sm text-red-700 dark:text-red-300 mt-1">
                 {criticalItems.length} products expire TODAY
               </p>
               <div className="mt-4 space-y-3">
@@ -152,14 +152,14 @@ export default function ExpiryDashboard() {
                   const isExpired = daysUntilExpiry < 0;
 
                   return (
-                    <div key={lotNumber || index} className="bg-white rounded-lg p-4 border-l-4 border-red-500">
+                    <div key={lotNumber || index} className="bg-white dark:bg-gray-800 rounded-lg p-4 border-l-4 border-red-500 dark:border-red-600">
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="flex items-center space-x-2">
-                            <span className="font-bold text-gray-900">{quantity} units</span>
-                            <span className="text-gray-600">{productName}</span>
+                            <span className="font-bold text-gray-900 dark:text-gray-100">{quantity} units</span>
+                            <span className="text-gray-600 dark:text-gray-400">{productName}</span>
                           </div>
-                          <div className="text-sm text-gray-500 mt-1">
+                          <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             LOT: {lotNumber} | Expires: {expiryDate}
                           </div>
                         </div>
@@ -167,9 +167,9 @@ export default function ExpiryDashboard() {
                           onClick={() => !isExpired && handleAssignToFlight(item)}
                           disabled={isExpired}
                           className={`text-sm px-4 py-2 rounded font-medium ${
-                            isExpired 
-                              ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                              : 'bg-purple-600 text-white hover:bg-purple-700'
+                            isExpired
+                              ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed'
+                              : 'bg-purple-600 dark:bg-purple-500 text-white hover:bg-purple-700 dark:hover:bg-purple-600'
                           }`}
                           title={isExpired ? 'Cannot assign expired products' : 'Assign to flight'}
                         >
@@ -189,10 +189,10 @@ export default function ExpiryDashboard() {
       {warningItems.length > 0 && (
         <div className="alert-warning select-none">
           <div className="flex items-start">
-            <Calendar className="w-6 h-6 text-yellow-600 mt-0.5" />
+            <Calendar className="w-6 h-6 text-yellow-600 dark:text-yellow-400 mt-0.5" />
             <div className="ml-3 flex-1">
-              <h3 className="text-lg font-bold text-yellow-900">WARNING - THIS WEEK</h3>
-              <p className="text-sm text-yellow-700 mt-1">
+              <h3 className="text-lg font-bold text-yellow-900 dark:text-yellow-200">WARNING - THIS WEEK</h3>
+              <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
                 {warningItems.length} products expiring in the next 7 days
               </p>
               <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -205,14 +205,14 @@ export default function ExpiryDashboard() {
                   const daysUntilExpiry = item?.Days_Until_Expiry ?? item?.days_until_expiry ?? 0;
 
                   return (
-                    <div key={lotNumber || index} className="bg-white rounded-lg p-3 border-l-4 border-yellow-400">
+                    <div key={lotNumber || index} className="bg-white dark:bg-gray-800 rounded-lg p-3 border-l-4 border-yellow-400">
                       <div className="flex justify-between items-start">
                         <div>
-                          <div className="font-medium text-gray-900">{productName}</div>
-                          <div className="text-sm text-gray-600 mt-1">
+                          <div className="font-medium text-gray-900 dark:text-gray-100">{productName}</div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                             {quantity} units | LOT: {lotNumber}
                           </div>
-                          <div className="text-xs text-gray-500 mt-1">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             Expires in {formatDaysUntilExpiry ? formatDaysUntilExpiry(daysUntilExpiry) : `${daysUntilExpiry} days`} ({expiryDate})
                           </div>
                         </div>
@@ -265,19 +265,19 @@ export default function ExpiryDashboard() {
 
 function StatCard({ title, value, subtitle, icon: Icon, color }) {
   const colorClasses = {
-    blue: 'bg-blue-50 text-blue-600',
-    red: 'bg-red-50 text-red-600',
-    yellow: 'bg-yellow-50 text-yellow-600',
-    green: 'bg-green-50 text-green-600'
+    blue: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
+    red: 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400',
+    yellow: 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400',
+    green: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400'
   };
 
   return (
     <div className="card select-none">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
-          {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
+          <p className="text-sm text-gray-600 dark:text-gray-400">{title}</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">{value}</p>
+          {subtitle && <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{subtitle}</p>}
         </div>
         <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
           <Icon className="w-6 h-6" />

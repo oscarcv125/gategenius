@@ -79,18 +79,18 @@ export default function CameraScanner({ products = [], onScanComplete }) {
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-gray-900">Scan Product Label</h3>
+        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Scan Product Label</h3>
         <div className="flex items-center space-x-2">
           <Database className="w-5 h-5 text-gray-400" />
-          <span className="text-sm text-gray-500">{products.length} products</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">{products.length} products</span>
         </div>
       </div>
 
       {!result && !scanning && (
-        <div className="bg-gray-50 rounded-lg p-8 text-center border-2 border-dashed border-gray-300">
+        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-8 text-center border-2 border-dashed border-gray-300 dark:border-gray-600">
           <Camera className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-          <p className="text-gray-600 font-medium mb-2">Scan Product Label</p>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-gray-600 dark:text-gray-300 font-medium mb-2">Scan Product Label</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
             Upload an image to auto-extract product info and match against database
           </p>
 
@@ -112,10 +112,10 @@ export default function CameraScanner({ products = [], onScanComplete }) {
       )}
 
       {scanning && (
-        <div className="bg-blue-50 rounded-lg p-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-3"></div>
-          <p className="text-blue-700 font-medium">Scanning image...</p>
-          <p className="text-sm text-blue-600 mt-1">AI is reading the label and checking database</p>
+        <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-8 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-3"></div>
+          <p className="text-blue-700 dark:text-blue-300 font-medium">Scanning image...</p>
+          <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">AI is reading the label and checking database</p>
         </div>
       )}
 
@@ -124,44 +124,44 @@ export default function CameraScanner({ products = [], onScanComplete }) {
           {/* Match Status Banner */}
           <div className={`rounded-lg p-4 border-2 ${
             matchResult.status === 'FOUND'
-              ? matchResult.color === 'green' ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'
-              : 'bg-red-50 border-red-200'
+              ? matchResult.color === 'green' ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700' : 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-700'
+              : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700'
           }`}>
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center space-x-2">
                 {matchResult.status === 'FOUND' ? (
                   <CheckCircle className={`w-6 h-6 ${
-                    matchResult.color === 'green' ? 'text-green-600' : 'text-yellow-600'
+                    matchResult.color === 'green' ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'
                   }`} />
                 ) : (
-                  <AlertCircle className="w-6 h-6 text-red-600" />
+                  <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
                 )}
                 <h4 className={`text-lg font-bold ${
                   matchResult.status === 'FOUND'
-                    ? matchResult.color === 'green' ? 'text-green-900' : 'text-yellow-900'
-                    : 'text-red-900'
+                    ? matchResult.color === 'green' ? 'text-green-900 dark:text-green-200' : 'text-yellow-900 dark:text-yellow-200'
+                    : 'text-red-900 dark:text-red-200'
                 }`}>
                   {matchResult.title}
                 </h4>
               </div>
               <button
                 onClick={handleReset}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             <p className={`text-sm ${
               matchResult.status === 'FOUND'
-                ? matchResult.color === 'green' ? 'text-green-700' : 'text-yellow-700'
-                : 'text-red-700'
+                ? matchResult.color === 'green' ? 'text-green-700 dark:text-green-300' : 'text-yellow-700 dark:text-yellow-300'
+                : 'text-red-700 dark:text-red-300'
             }`}>
               {matchResult.description}
             </p>
             {matchResult.confidence > 0 && (
               <div className="mt-2 flex items-center space-x-2">
-                <span className="text-xs font-medium text-gray-700">Confidence:</span>
-                <span className="text-sm font-bold text-gray-900">{matchResult.confidence}%</span>
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Confidence:</span>
+                <span className="text-sm font-bold text-gray-900 dark:text-gray-100">{matchResult.confidence}%</span>
               </div>
             )}
           </div>
@@ -169,16 +169,16 @@ export default function CameraScanner({ products = [], onScanComplete }) {
           {/* Detection Strategy Badges */}
           {strategies.length > 0 && (
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-medium text-gray-600">Detection Methods:</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Detection Methods:</span>
               {strategies.map((strategy, idx) => (
                 <span
                   key={idx}
                   className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                     strategy === 'BARCODE'
-                      ? 'bg-purple-100 text-purple-700'
+                      ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400'
                       : strategy === 'OCR'
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'bg-gray-100 text-gray-700'
+                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
                   }`}
                 >
                   {strategy === 'BARCODE' && <Barcode className="w-3 h-3 mr-1" />}
@@ -191,19 +191,19 @@ export default function CameraScanner({ products = [], onScanComplete }) {
 
           {/* Barcode Information */}
           {barcodeInfo && (
-            <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+            <div className="bg-purple-50 dark:bg-purple-900/30 rounded-lg p-4 border border-purple-200 dark:border-purple-700">
               <div className="flex items-center space-x-2 mb-2">
-                <Barcode className="w-5 h-5 text-purple-600" />
-                <h5 className="text-sm font-bold text-purple-900">Barcode Detected</h5>
+                <Barcode className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                <h5 className="text-sm font-bold text-purple-900 dark:text-purple-200">Barcode Detected</h5>
               </div>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                  <span className="text-purple-700 font-medium">Value:</span>
-                  <span className="ml-2 font-mono text-purple-900">{barcodeInfo.value}</span>
+                  <span className="text-purple-700 dark:text-purple-300 font-medium">Value:</span>
+                  <span className="ml-2 font-mono text-purple-900 dark:text-purple-100">{barcodeInfo.value}</span>
                 </div>
                 <div>
-                  <span className="text-purple-700 font-medium">Format:</span>
-                  <span className="ml-2 text-purple-900">{barcodeInfo.format}</span>
+                  <span className="text-purple-700 dark:text-purple-300 font-medium">Format:</span>
+                  <span className="ml-2 text-purple-900 dark:text-purple-100">{barcodeInfo.format}</span>
                 </div>
               </div>
             </div>
@@ -211,29 +211,29 @@ export default function CameraScanner({ products = [], onScanComplete }) {
 
           {/* External API Data */}
           {externalData && (
-            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+            <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4 border border-blue-200 dark:border-blue-700">
               <div className="flex items-center space-x-2 mb-3">
-                <Globe className="w-5 h-5 text-blue-600" />
-                <h5 className="text-sm font-bold text-blue-900">External Product Database</h5>
+                <Globe className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <h5 className="text-sm font-bold text-blue-900 dark:text-blue-200">External Product Database</h5>
               </div>
               <div className="space-y-2">
-                <div className="bg-white rounded p-2">
-                  <span className="text-xs text-blue-700 font-medium">Product Name:</span>
-                  <p className="text-sm text-blue-900 font-medium mt-1">{externalData.product_name}</p>
+                <div className="bg-white dark:bg-gray-800 rounded p-2">
+                  <span className="text-xs text-blue-700 dark:text-blue-400 font-medium">Product Name:</span>
+                  <p className="text-sm text-blue-900 dark:text-blue-200 font-medium mt-1">{externalData.product_name}</p>
                 </div>
                 {externalData.brands && externalData.brands !== 'Unknown' && (
-                  <div className="bg-white rounded p-2">
-                    <span className="text-xs text-blue-700 font-medium">Brand:</span>
-                    <p className="text-sm text-blue-900 mt-1">{externalData.brands}</p>
+                  <div className="bg-white dark:bg-gray-800 rounded p-2">
+                    <span className="text-xs text-blue-700 dark:text-blue-400 font-medium">Brand:</span>
+                    <p className="text-sm text-blue-900 dark:text-blue-200 mt-1">{externalData.brands}</p>
                   </div>
                 )}
                 {externalData.quantity && (
-                  <div className="bg-white rounded p-2">
-                    <span className="text-xs text-blue-700 font-medium">Quantity:</span>
-                    <p className="text-sm text-blue-900 mt-1">{externalData.quantity}</p>
+                  <div className="bg-white dark:bg-gray-800 rounded p-2">
+                    <span className="text-xs text-blue-700 dark:text-blue-400 font-medium">Quantity:</span>
+                    <p className="text-sm text-blue-900 dark:text-blue-200 mt-1">{externalData.quantity}</p>
                   </div>
                 )}
-                <p className="text-xs text-blue-600 mt-2">
+                <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
                   ℹ️ Data from Open Food Facts - matched against local inventory
                 </p>
               </div>
@@ -241,48 +241,48 @@ export default function CameraScanner({ products = [], onScanComplete }) {
           )}
 
           {/* Scanned Data */}
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
-            <h5 className="text-sm font-bold text-gray-700 mb-3">📸 Extracted Information:</h5>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+            <h5 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">📸 Extracted Information:</h5>
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-50 rounded p-2">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs text-gray-600">Product ID</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Product ID</p>
                   {result._enriched_ID && (
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Auto-filled</span>
+                    <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded">Auto-filled</span>
                   )}
                 </div>
-                <p className="font-medium text-gray-900">{result.Product_ID}</p>
+                <p className="font-medium text-gray-900 dark:text-gray-100">{result.Product_ID}</p>
               </div>
-              <div className="bg-gray-50 rounded p-2">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs text-gray-600">LOT Number</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">LOT Number</p>
                   {result._enriched_LOT && (
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Auto-filled</span>
+                    <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded">Auto-filled</span>
                   )}
                 </div>
-                <p className="font-medium text-gray-900">{result.LOT_Number}</p>
+                <p className="font-medium text-gray-900 dark:text-gray-100">{result.LOT_Number}</p>
               </div>
-              <div className="bg-gray-50 rounded p-2">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs text-gray-600">Product Name</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Product Name</p>
                   {result._enriched_Name && (
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Auto-filled</span>
+                    <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded">Auto-filled</span>
                   )}
                 </div>
-                <p className="font-medium text-gray-900">{result.Product_Name}</p>
+                <p className="font-medium text-gray-900 dark:text-gray-100">{result.Product_Name}</p>
               </div>
-              <div className="bg-gray-50 rounded p-2">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs text-gray-600">Expiry Date</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Expiry Date</p>
                   {result._enriched_Date && (
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Auto-filled</span>
+                    <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded">Auto-filled</span>
                   )}
                 </div>
-                <p className="font-medium text-red-600">{result.Expiry_Date}</p>
+                <p className="font-medium text-red-600 dark:text-red-400">{result.Expiry_Date}</p>
               </div>
             </div>
             {(result._enriched_LOT || result._enriched_ID || result._enriched_Name || result._enriched_Date) && (
-              <p className="text-xs text-blue-600 mt-3 bg-blue-50 p-2 rounded">
+              <p className="text-xs text-blue-600 dark:text-blue-400 mt-3 bg-blue-50 dark:bg-blue-900/30 p-2 rounded">
                 💡 Some fields were auto-filled from database match
               </p>
             )}
@@ -290,38 +290,38 @@ export default function CameraScanner({ products = [], onScanComplete }) {
 
           {/* Database Matches */}
           {matchResult.status === 'FOUND' && matchResult.matches && (
-            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-              <h5 className="text-sm font-bold text-blue-900 mb-3">
+            <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4 border border-blue-200 dark:border-blue-700">
+              <h5 className="text-sm font-bold text-blue-900 dark:text-blue-200 mb-3">
                 💾 Database Match{matchResult.matches.length > 1 ? 'es' : ''}
                 {matchResult.matches.length > 1 && ` (${matchResult.matches.length})`}:
               </h5>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {matchResult.matches.slice(0, 5).map((product, idx) => (
-                  <div key={idx} className="bg-white rounded-lg p-3 border border-blue-200">
+                  <div key={idx} className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-blue-200 dark:border-blue-700">
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
-                        <span className="text-gray-600">Product:</span>
-                        <span className="ml-1 font-bold text-gray-900">{product.Product_Name}</span>
+                        <span className="text-gray-600 dark:text-gray-400">Product:</span>
+                        <span className="ml-1 font-bold text-gray-900 dark:text-gray-100">{product.Product_Name}</span>
                       </div>
                       <div>
-                        <span className="text-gray-600">ID:</span>
-                        <span className="ml-1 font-medium text-gray-900">{product.Product_ID}</span>
+                        <span className="text-gray-600 dark:text-gray-400">ID:</span>
+                        <span className="ml-1 font-medium text-gray-900 dark:text-gray-100">{product.Product_ID}</span>
                       </div>
                       <div>
-                        <span className="text-gray-600">LOT:</span>
-                        <span className="ml-1 font-medium text-gray-900">{product.LOT_Number}</span>
+                        <span className="text-gray-600 dark:text-gray-400">LOT:</span>
+                        <span className="ml-1 font-medium text-gray-900 dark:text-gray-100">{product.LOT_Number}</span>
                       </div>
                       <div>
-                        <span className="text-gray-600">Expiry:</span>
+                        <span className="text-gray-600 dark:text-gray-400">Expiry:</span>
                         <span className={`ml-1 font-medium ${getExpiryColor(product.Days_Until_Expiry)}`}>
                           {formatDaysUntilExpiry(product.Days_Until_Expiry)}
                         </span>
                       </div>
                       <div className="col-span-2">
-                        <span className="text-gray-600">Stock:</span>
-                        <span className="ml-1 font-medium text-gray-900">{product.Quantity_in_Stock} units</span>
-                        <span className="ml-2 text-gray-600">Value:</span>
-                        <span className="ml-1 font-medium text-gray-900">${product.Cost_per_Unit}</span>
+                        <span className="text-gray-600 dark:text-gray-400">Stock:</span>
+                        <span className="ml-1 font-medium text-gray-900 dark:text-gray-100">{product.Quantity_in_Stock} units</span>
+                        <span className="ml-2 text-gray-600 dark:text-gray-400">Value:</span>
+                        <span className="ml-1 font-medium text-gray-900 dark:text-gray-100">${product.Cost_per_Unit}</span>
                       </div>
                     </div>
                   </div>
@@ -332,10 +332,10 @@ export default function CameraScanner({ products = [], onScanComplete }) {
 
           {/* Not in Database Suggestion */}
           {matchResult.status === 'NOT_IN_DATABASE' && (
-            <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
-              <h5 className="text-sm font-bold text-orange-900 mb-2">💡 Suggestion:</h5>
-              <p className="text-sm text-orange-700">{matchResult.suggestion}</p>
-              <ul className="mt-3 text-sm text-orange-700 list-disc list-inside space-y-1">
+            <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4 border border-orange-200 dark:border-orange-700">
+              <h5 className="text-sm font-bold text-orange-900 dark:text-orange-200 mb-2">💡 Suggestion:</h5>
+              <p className="text-sm text-orange-700 dark:text-orange-300">{matchResult.suggestion}</p>
+              <ul className="mt-3 text-sm text-orange-700 dark:text-orange-300 list-disc list-inside space-y-1">
                 <li>Verify this is an airline catering product</li>
                 <li>Check if it needs to be added to the inventory system</li>
                 <li>Contact inventory manager if unsure</li>
@@ -353,17 +353,17 @@ export default function CameraScanner({ products = [], onScanComplete }) {
       )}
 
       {error && (
-        <div className="bg-red-50 rounded-lg p-6 border-2 border-red-200">
+        <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-6 border-2 border-red-200 dark:border-red-700">
           <div className="flex items-start justify-between mb-2">
-            <h4 className="text-lg font-bold text-red-900">Scan Failed</h4>
+            <h4 className="text-lg font-bold text-red-900 dark:text-red-200">Scan Failed</h4>
             <button
               onClick={handleReset}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
-          <p className="text-sm text-red-700 mb-4">{error}</p>
+          <p className="text-sm text-red-700 dark:text-red-300 mb-4">{error}</p>
           <button
             onClick={handleReset}
             className="btn-secondary"

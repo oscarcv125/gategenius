@@ -93,7 +93,7 @@ export default function ProductTable({ products, onRemoveProduct }) {
   return (
     <div className="card" ref={tableTopRef}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-gray-900">All Products</h3>
+        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">All Products</h3>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
@@ -101,23 +101,23 @@ export default function ProductTable({ products, onRemoveProduct }) {
             placeholder="Search products, LOT..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           />
         </div>
       </div>
 
       <div className="flex items-center justify-between mb-3">
-        <div className="text-sm text-gray-600 select-none">
+        <div className="text-sm text-gray-600 dark:text-gray-400 select-none">
           Showing {startIndex + 1}-{Math.min(endIndex, sortedProducts.length)} of {sortedProducts.length} products
           {sortedProducts.length !== products.length && ` (filtered from ${products.length})`}
         </div>
         <div className="flex items-center space-x-2">
-          <label htmlFor="itemsPerPage" className="text-sm text-gray-600">Items per page:</label>
+          <label htmlFor="itemsPerPage" className="text-sm text-gray-600 dark:text-gray-400">Items per page:</label>
           <select
             id="itemsPerPage"
             value={itemsPerPage}
             onChange={handleItemsPerPageChange}
-            className="border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           >
             <option value={10}>10</option>
             <option value={20}>20</option>
@@ -129,10 +129,10 @@ export default function ProductTable({ products, onRemoveProduct }) {
 
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700">
             <tr>
               <th
-                className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
                 onClick={() => handleSort('Product_ID')}
               >
                 <div className="flex items-center space-x-1">
@@ -141,7 +141,7 @@ export default function ProductTable({ products, onRemoveProduct }) {
                 </div>
               </th>
               <th
-                className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
                 onClick={() => handleSort('Product_Name')}
               >
                 <div className="flex items-center space-x-1">
@@ -150,7 +150,7 @@ export default function ProductTable({ products, onRemoveProduct }) {
                 </div>
               </th>
               <th
-                className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
                 onClick={() => handleSort('LOT_Number')}
               >
                 <div className="flex items-center space-x-1">
@@ -159,7 +159,7 @@ export default function ProductTable({ products, onRemoveProduct }) {
                 </div>
               </th>
               <th
-                className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
                 onClick={() => handleSort('Expiry_Date')}
               >
                 <div className="flex items-center space-x-1">
@@ -168,7 +168,7 @@ export default function ProductTable({ products, onRemoveProduct }) {
                 </div>
               </th>
               <th
-                className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
                 onClick={() => handleSort('Days_Until_Expiry')}
               >
                 <div className="flex items-center space-x-1">
@@ -177,7 +177,7 @@ export default function ProductTable({ products, onRemoveProduct }) {
                 </div>
               </th>
               <th
-                className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
                 onClick={() => handleSort('Quantity')}
               >
                 <div className="flex items-center space-x-1">
@@ -185,40 +185,40 @@ export default function ProductTable({ products, onRemoveProduct }) {
                   <SortIcon field="Quantity" />
                 </div>
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                 Action
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {paginatedProducts.map((product, idx) => {
               const expired = isExpired(product.Days_Until_Expiry);
               return (
-                <tr key={idx} className={`hover:bg-gray-50 ${expired ? 'bg-gray-50' : ''}`}>
-                  <td className="px-4 py-3 text-sm font-medium text-gray-900 select-none">
+                <tr key={idx} className={`hover:bg-gray-50 dark:hover:bg-gray-700 ${expired ? 'bg-gray-50 dark:bg-gray-700' : ''}`}>
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 select-none">
                     {product.Product_ID}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-700 select-none">
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 select-none">
                     {product.Product_Name}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-700 select-none">
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 select-none">
                     {product.LOT_Number}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-700 select-none">
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 select-none">
                     {product.Expiry_Date}
                   </td>
                   <td className={`px-4 py-3 text-sm select-none ${getExpiryColor(product.Days_Until_Expiry)}`}>
                     {formatDaysUntilExpiry(product.Days_Until_Expiry)}
                     {expired && <span className="ml-2 text-xs">(Expired)</span>}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-900 font-medium select-none">
+                  <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100 font-medium select-none">
                     {product.Quantity}
                   </td>
                   <td className="px-4 py-3 text-sm">
                     {expired && (
                       <button
                         onClick={() => handleRemove(product)}
-                        className="text-red-600 hover:text-red-800 hover:bg-red-50 p-1 rounded"
+                        className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded"
                         title="Remove expired product"
                       >
                         <X className="w-4 h-4" />
@@ -233,18 +233,18 @@ export default function ProductTable({ products, onRemoveProduct }) {
       </div>
 
       {sortedProducts.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
           No products found matching "{searchTerm}"
         </div>
       )}
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-between border-t pt-4">
+        <div className="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
+            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-gray-800"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>Previous</span>
@@ -269,7 +269,7 @@ export default function ProductTable({ products, onRemoveProduct }) {
 
               if (showEllipsisBefore || showEllipsisAfter) {
                 return (
-                  <span key={page} className="px-2 text-gray-500">
+                  <span key={page} className="px-2 text-gray-500 dark:text-gray-400">
                     ...
                   </span>
                 );
@@ -281,8 +281,8 @@ export default function ProductTable({ products, onRemoveProduct }) {
                   onClick={() => handlePageChange(page)}
                   className={`px-3 py-1 rounded ${
                     currentPage === page
-                      ? 'bg-primary-600 text-white font-medium'
-                      : 'border border-gray-300 hover:bg-gray-50'
+                      ? 'bg-primary-600 dark:bg-primary-500 text-white font-medium'
+                      : 'border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
                 >
                   {page}
@@ -294,7 +294,7 @@ export default function ProductTable({ products, onRemoveProduct }) {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
+            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-gray-800"
           >
             <span>Next</span>
             <ChevronRight className="w-4 h-4" />

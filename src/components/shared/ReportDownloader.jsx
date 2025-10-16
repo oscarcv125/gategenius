@@ -194,41 +194,41 @@ export default function ReportDownloader({ moduleName, data, reportType, flightI
           />
 
           {/* Dropdown content */}
-          <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-20">
+          <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20">
             <div className="py-1">
               {/* PDF Option */}
               <button
                 onClick={handlePDFDownload}
-                className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center space-x-3 transition-colors"
+                className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3 transition-colors"
               >
-                <FileText className="w-5 h-5 text-red-500" />
+                <FileText className="w-5 h-5 text-red-500 dark:text-red-400" />
                 <div>
-                  <div className="font-medium text-gray-900">Download as PDF</div>
-                  <div className="text-xs text-gray-500">Best for presentations</div>
+                  <div className="font-medium text-gray-900 dark:text-gray-100">Download as PDF</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">Best for presentations</div>
                 </div>
               </button>
 
               {/* Excel Option */}
               <button
                 onClick={handleExcelDownload}
-                className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center space-x-3 transition-colors"
+                className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3 transition-colors"
               >
-                <FileSpreadsheet className="w-5 h-5 text-green-600" />
+                <FileSpreadsheet className="w-5 h-5 text-green-600 dark:text-green-400" />
                 <div>
-                  <div className="font-medium text-gray-900">Download as Excel</div>
-                  <div className="text-xs text-gray-500">Best for data analysis</div>
+                  <div className="font-medium text-gray-900 dark:text-gray-100">Download as Excel</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">Best for data analysis</div>
                 </div>
               </button>
 
               {/* CSV Option */}
               <button
                 onClick={handleCSVDownload}
-                className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center space-x-3 transition-colors"
+                className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3 transition-colors"
               >
-                <FileBarChart className="w-5 h-5 text-blue-600" />
+                <FileBarChart className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 <div>
-                  <div className="font-medium text-gray-900">Download as CSV</div>
-                  <div className="text-xs text-gray-500">Universal format</div>
+                  <div className="font-medium text-gray-900 dark:text-gray-100">Download as CSV</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">Universal format</div>
                 </div>
               </button>
             </div>
