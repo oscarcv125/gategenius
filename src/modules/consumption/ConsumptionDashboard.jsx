@@ -244,12 +244,14 @@ export default function ConsumptionDashboard() {
       {/* High Waste Products */}
       {highWasteProducts.length > 0 && (
         <div className="card select-none">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-start justify-between mb-4">
             <div>
               <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">High Waste Products</h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">Products with low consumption rates (below 70%)</p>
             </div>
-            <TrendingDown className="w-6 h-6 text-red-500 dark:text-red-400" />
+            <div className="flex items-center justify-center p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
+              <TrendingDown className="w-6 h-6 text-red-500 dark:text-red-400" />
+            </div>
           </div>
 
           <div className="space-y-3">
@@ -257,13 +259,13 @@ export default function ConsumptionDashboard() {
               <div key={product.product_id} className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 rounded-lg p-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3 mb-2">
                       <h4 className="font-bold text-gray-900 dark:text-gray-100">{product.product_name}</h4>
                       <span className="px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-xs font-medium rounded-full">
                         {product.avg_consumption_rate}% consumed
                       </span>
                     </div>
-                    <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
                       <span>Total waste: ${product.total_waste.toFixed(2)}</span>
                       <span>•</span>
                       <span>{product.flights_count} flights</span>
@@ -286,31 +288,31 @@ export default function ConsumptionDashboard() {
       {/* Stockout Risk Products */}
       {stockoutRiskProducts.length > 0 && (
         <div className="card select-none">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-start justify-between mb-4">
             <div>
               <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Stockout Risk Products</h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">Products that frequently run out during flight</p>
             </div>
-            <AlertCircle className="w-6 h-6 text-yellow-500 dark:text-yellow-400" />
+            <div className="flex items-center justify-center p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+              <AlertCircle className="w-6 h-6 text-yellow-500 dark:text-yellow-400" />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {stockoutRiskProducts.slice(0, 6).map((product) => (
               <div key={product.product_id} className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 rounded-lg p-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h4 className="font-medium text-gray-900 dark:text-gray-100">{product.product_name}</h4>
-                    <div className="flex items-center space-x-2 mt-2">
-                      <AlertCircle className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
-                      <span className="text-sm text-yellow-700 dark:text-yellow-300 font-medium">
-                        "Ran out early" {product.count} times
-                      </span>
-                    </div>
-                    <div className="mt-2 p-2 bg-white dark:bg-gray-800 rounded border border-yellow-200 dark:border-yellow-700">
-                      <p className="text-xs text-gray-700 dark:text-gray-300">
-                        ✅ Increase loading by 10-15% to prevent stockouts
-                      </p>
-                    </div>
+                <div>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">{product.product_name}</h4>
+                  <div className="flex items-center space-x-2 mt-2">
+                    <AlertCircle className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+                    <span className="text-sm text-yellow-700 dark:text-yellow-300 font-medium">
+                      "Ran out early" {product.count} times
+                    </span>
+                  </div>
+                  <div className="mt-2 p-2 bg-white dark:bg-gray-800 rounded border border-yellow-200 dark:border-yellow-700">
+                    <p className="text-xs text-gray-700 dark:text-gray-300">
+                      ✅ Increase loading by 10-15% to prevent stockouts
+                    </p>
                   </div>
                 </div>
               </div>
