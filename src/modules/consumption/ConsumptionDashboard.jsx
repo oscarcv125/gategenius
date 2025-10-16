@@ -3,6 +3,7 @@ import { useConsumptionStore } from '../../store/consumptionStore';
 import { TrendingUp, TrendingDown, AlertCircle, DollarSign, Package, CheckCircle } from 'lucide-react';
 import FlightSelector from '../../components/shared/FlightSelector';
 import ConsumptionChart from '../../components/shared/ConsumptionChart';
+import ReportDownloader from '../../components/shared/ReportDownloader';
 
 /**
  * Consumption Intelligence Dashboard
@@ -37,6 +38,15 @@ export default function ConsumptionDashboard() {
   const highWasteProducts = getHighWasteProducts();
   const stockoutRiskProducts = getStockoutRiskProducts();
   const stats = getWasteStats();
+
+  // Prepare report data
+  const reportData = {
+    stats,
+    highWasteProducts,
+    stockoutRiskProducts,
+    selectedFlight,
+    flightPredictions
+  };
 
   // When a flight is selected, generate predictions
   useEffect(() => {
@@ -73,6 +83,16 @@ export default function ConsumptionDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Report Download Section */}
+      <div className="flex justify-end">
+        <ReportDownloader
+          moduleName="Consumption Prediction"
+          data={reportData}
+          reportType="consumption"
+          flightId={selectedFlight?.Flight_ID}
+        />
+      </div>
+
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="card select-none">

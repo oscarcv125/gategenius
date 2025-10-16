@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useProductivityStore } from '../../store/productivityStore';
 import { Users, Clock, TrendingUp } from 'lucide-react';
 import PeakTimeChart from '../../components/shared/PeakTimeChart';
+import ReportDownloader from '../../components/shared/ReportDownloader';
 
 /**
  * Workforce Productivity Dashboard
@@ -42,8 +43,26 @@ export default function ProductivityDashboard() {
   const complexity = getComplexityStats();
   const peakTimes = getPeakTimes();
 
+  // Prepare report data
+  const reportData = {
+    drawers,
+    totalTime,
+    workforceNeeds,
+    complexity,
+    peakTimes
+  };
+
   return (
     <div className="space-y-6">
+      {/* Report Download Section */}
+      <div className="flex justify-end">
+        <ReportDownloader
+          moduleName="Workforce Planning"
+          data={reportData}
+          reportType="productivity"
+        />
+      </div>
+
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="card select-none">

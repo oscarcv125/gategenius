@@ -4,6 +4,7 @@ import { useConsumptionStore } from '../../store/consumptionStore';
 import { Zap, TrendingUp, Calendar, Clock, DollarSign, CheckCircle, Download } from 'lucide-react';
 import { generateSmartFlightAssignment } from '../../algorithms/smartAssignment';
 import ImpactSummary from '../../components/shared/ImpactSummary';
+import ReportDownloader from '../../components/shared/ReportDownloader';
 
 /**
  * Smart Flight Assignment Dashboard
@@ -125,6 +126,18 @@ export default function SmartAssignmentDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Report Download Section */}
+      {assignment && (
+        <div className="flex justify-end">
+          <ReportDownloader
+            moduleName="Smart Assignment"
+            data={assignment}
+            reportType="smart_assignment"
+            flightId={selectedFlight?.Flight_ID}
+          />
+        </div>
+      )}
+
       {/* Header */}
       <div className="card bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 select-none">
         <div className="flex items-start space-x-4">

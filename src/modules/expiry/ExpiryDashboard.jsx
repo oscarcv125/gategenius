@@ -3,6 +3,7 @@ import { useExpiryStore } from '../../store/expiryStore';
 import { AlertTriangle, Calendar, Camera, Package } from 'lucide-react';
 import CameraScanner from '../../components/shared/CameraScanner';
 import ProductTable from '../../components/shared/ProductTable';
+import ReportDownloader from '../../components/shared/ReportDownloader';
 import { formatDaysUntilExpiry } from '../../utils/dateHelpers';
 
 /**
@@ -45,8 +46,25 @@ export default function ExpiryDashboard() {
   const warningItems = getWarningItems();
   const stats = getWasteStats();
 
+  // Prepare report data
+  const reportData = {
+    stats,
+    criticalItems,
+    warningItems,
+    allProducts: products
+  };
+
   return (
     <div className="space-y-6">
+      {/* Report Download Section */}
+      <div className="flex justify-end">
+        <ReportDownloader
+          moduleName="Expiration Intelligence"
+          data={reportData}
+          reportType="expiration"
+        />
+      </div>
+
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <StatCard
