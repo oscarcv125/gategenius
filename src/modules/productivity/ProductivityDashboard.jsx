@@ -164,7 +164,7 @@ export default function ProductivityDashboard() {
           {peakTimes.map((peak, idx) => (
             <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 flex items-center justify-center bg-primary-100 dark:bg-primary-900/30 rounded-lg">
+                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-primary-100 dark:bg-primary-900/30 rounded-lg">
                   <Clock className="w-6 h-6 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
@@ -172,7 +172,7 @@ export default function ProductivityDashboard() {
                   <p className="text-sm text-gray-600 dark:text-gray-400">{peak.drawers} drawers to assemble</p>
                 </div>
               </div>
-              <div className="text-right">
+              <div className="text-right flex-shrink-0">
                 <p className="font-bold text-primary-600 dark:text-primary-400">{peak.workers_needed} workers</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">needed</p>
               </div>

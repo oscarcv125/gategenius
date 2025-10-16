@@ -153,7 +153,7 @@ export default function ExpiryDashboard() {
 
                   return (
                     <div key={lotNumber || index} className="bg-white dark:bg-gray-800 rounded-lg p-4 border-l-4 border-red-500 dark:border-red-600">
-                      <div className="flex justify-between items-start">
+                      <div className="flex justify-between items-center">
                         <div>
                           <div className="flex items-center space-x-2">
                             <span className="font-bold text-gray-900 dark:text-gray-100">{quantity} units</span>
@@ -166,7 +166,7 @@ export default function ExpiryDashboard() {
                         <button
                           onClick={() => !isExpired && handleAssignToFlight(item)}
                           disabled={isExpired}
-                          className={`text-sm px-4 py-2 rounded font-medium ${
+                          className={`flex items-center justify-center text-sm px-4 py-2 rounded font-medium ${
                             isExpired
                               ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed'
                               : 'bg-purple-600 dark:bg-purple-500 text-white hover:bg-purple-700 dark:hover:bg-purple-600'
@@ -206,7 +206,7 @@ export default function ExpiryDashboard() {
 
                   return (
                     <div key={lotNumber || index} className="bg-white dark:bg-gray-800 rounded-lg p-3 border-l-4 border-yellow-400">
-                      <div className="flex justify-between items-start">
+                      <div className="flex justify-between items-center">
                         <div>
                           <div className="font-medium text-gray-900 dark:text-gray-100">{productName}</div>
                           <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -218,7 +218,7 @@ export default function ExpiryDashboard() {
                         </div>
                         <button
                           onClick={() => handleAssignToFlight(item)}
-                          className="btn-primary text-sm ml-3"
+                          className="btn-primary text-sm ml-3 flex items-center justify-center"
                           title="Assign to flight"
                         >
                           Assign to Flight
