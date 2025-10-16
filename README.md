@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # GateGenius
+=======
+# GateGenius 🛫
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 > **AI-Powered Airline Catering Intelligence Platform**
 > Transforming how airlines manage in-flight catering with smart automation and predictive analytics
@@ -10,7 +14,11 @@
 
 ---
 
+<<<<<<< HEAD
 ## The Problem
+=======
+## 🎯 The Problem
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 Gategroup, the world's largest airline catering company, faces **$164 million in annual losses** across their global network due to:
 
@@ -18,32 +26,52 @@ Gategroup, the world's largest airline catering company, faces **$164 million in
 2. **Over/Under-Provisioning** - Without consumption data, airlines load too much or too little
 3. **Workforce Inefficiency** - Manual drawer assembly planning leads to over/understaffing
 
+<<<<<<< HEAD
 ## Our Solution
 
 **GateGenius** is an AI-powered platform that combines three intelligent modules to solve these critical operational challenges:
 
 ### Module 1: Expiration Intelligence
+=======
+## 💡 Our Solution
+
+**GateGenius** is an AI-powered platform that combines three intelligent modules to solve these critical operational challenges:
+
+### Module 1: Expiration Intelligence 📅
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 - Real-time tracking of product expiration dates
 - Critical alerts for products expiring today
 - Warning system for items expiring within 7 days
 - Visual scanning with AI-powered barcode recognition
 - Value-at-risk calculations to quantify potential losses
 
+<<<<<<< HEAD
 ### Module 2: Consumption Prediction
+=======
+### Module 2: Consumption Prediction 📊
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 - Historical consumption analysis by flight type and route
 - AI-driven predictions for optimal product quantities
 - Waste reduction recommendations
 - Stockout risk identification
 - Route-specific consumption patterns
 
+<<<<<<< HEAD
 ### Module 3: Workforce Planning
+=======
+### Module 3: Workforce Planning 👥
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 - Automated worker-hour calculations
 - Peak time analysis for optimal shift planning
 - Complexity-based task allocation
 - Real-time utilization metrics
 - Cost optimization recommendations
 
+<<<<<<< HEAD
 ### Killer Feature: Smart Flight Assignment
+=======
+### 🚀 Killer Feature: Smart Flight Assignment
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 Our **Smart Assignment AI** combines all three modules to:
 - Automatically match near-expiry products with flights that have high consumption rates
@@ -57,7 +85,11 @@ Our **Smart Assignment AI** combines all three modules to:
 
 ---
 
+<<<<<<< HEAD
 ## Business Impact
+=======
+## 📈 Business Impact
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 ### ROI Breakdown
 
@@ -68,6 +100,7 @@ Our **Smart Assignment AI** combines all three modules to:
 | **Global Network** | **$164M** | 1,754 |
 
 ### Key Metrics
+<<<<<<< HEAD
 - **78% reduction** in expiration waste
 - **45% decrease** in over-provisioning
 - **30% improvement** in workforce efficiency
@@ -76,6 +109,16 @@ Our **Smart Assignment AI** combines all three modules to:
 ---
 
 ## Technology Stack
+=======
+- 🎯 **78% reduction** in expiration waste
+- 📉 **45% decrease** in over-provisioning
+- ⚡ **30% improvement** in workforce efficiency
+- 💰 **$93,600 saved per facility** annually
+
+---
+
+## 🛠️ Technology Stack
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 ### Frontend
 - **React 19.1** - Modern component-based UI
@@ -90,6 +133,7 @@ Our **Smart Assignment AI** combines all three modules to:
 - **Smart Algorithms** - Custom optimization logic
 
 ### Features
+<<<<<<< HEAD
 - **Dark Mode** - Complete light/dark theme support
 - **Responsive Design** - Works on all devices
 - **Real-time Analytics** - Live data processing
@@ -99,6 +143,17 @@ Our **Smart Assignment AI** combines all three modules to:
 ---
 
 ## Quick Start
+=======
+- 🌙 **Dark Mode** - Complete light/dark theme support
+- 📱 **Responsive Design** - Works on all devices
+- 📊 **Real-time Analytics** - Live data processing
+- 📥 **Export Capabilities** - PDF & Excel reports
+- 🎨 **Professional UI** - Clean, modern interface
+
+---
+
+## 🚀 Quick Start
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 ### Prerequisites
 - Node.js 18+ and npm
@@ -130,7 +185,11 @@ npm run preview
 
 ---
 
+<<<<<<< HEAD
 ## Features Showcase
+=======
+## 🎨 Features Showcase
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 ### Expiration Dashboard
 - **Live Monitoring**: Real-time tracking of all products
@@ -162,7 +221,11 @@ npm run preview
 
 ---
 
+<<<<<<< HEAD
 ## Data Sources
+=======
+## 📊 Data Sources
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 GateGenius processes data from:
 - **Expiration Data**: Product inventory with LOT numbers and expiry dates
@@ -172,7 +235,11 @@ GateGenius processes data from:
 
 ---
 
+<<<<<<< HEAD
 ## Team
+=======
+## 👥 Team
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 - **Abel** - Data Services, AI Integration, State Management
 - **Hermann** - Expiration Intelligence Module
@@ -181,7 +248,11 @@ GateGenius processes data from:
 
 ---
 
+<<<<<<< HEAD
 ## Why GateGenius Wins
+=======
+## 🏆 Why GateGenius Wins
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 1. **Real Business Impact**: Addresses a documented $164M problem
 2. **Complete Solution**: End-to-end platform, not just a concept
@@ -193,7 +264,11 @@ GateGenius processes data from:
 
 ---
 
+<<<<<<< HEAD
 ## Future Enhancements
+=======
+## 🔮 Future Enhancements
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 - **Mobile App**: Native iOS/Android applications
 - **IoT Integration**: RFID/sensor-based inventory tracking
@@ -204,13 +279,21 @@ GateGenius processes data from:
 
 ---
 
+<<<<<<< HEAD
 ## License
+=======
+## 📄 License
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 This project was created for HackMTY 2025.
 
 ---
 
+<<<<<<< HEAD
 ## Acknowledgments
+=======
+## 🙏 Acknowledgments
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 - **Gategroup** for the real-world operational data and insights
 - **HackMTY 2025** for the opportunity to solve impactful problems
@@ -218,17 +301,25 @@ This project was created for HackMTY 2025.
 
 ---
 
+<<<<<<< HEAD
 ## Contact
+=======
+## 📧 Contact
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 For questions, demo requests, or collaboration:
-- **GitHub**: [oscarcv125/HackMTY2025](https://github.com/oscarcv125/HackMTY2025)
+- **GitHub**: [oscarcv125/gategenius](https://github.com/oscarcv125/gategenius)
 - **Event**: HackMTY 2025
 
 ---
 
 <div align="center">
 
+<<<<<<< HEAD
 ### Built at HackMTY 2025
+=======
+### Built with ❤️ at HackMTY 2025
+>>>>>>> 3d79e66e7d526644a752c1d06ad37018db18b70a
 
 **Saving millions. One flight at a time.**
 
