@@ -15,16 +15,17 @@
 class GeminiAPI {
   constructor() {
     this.apiKey = import.meta.env.VITE_GEMINI_API_KEY || null;
-    this.visionEndpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
-    this.textEndpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+    this.visionEndpoint = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent';
+    this.textEndpoint = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent';
   }
 
   /**
    * Scan expiry date from product label image
    * @param {File|Blob} imageFile - Image file containing product label
+   * @param {Array} productsDatabase - Array of products for context/validation
    * @returns {Promise<Object>} Extracted expiry information
    */
-  async scanExpiryLabel(imageFile) {
+  async scanExpiryLabel(imageFile, productsDatabase = []) {
     if (!this.apiKey) {
       console.warn('⚠️ No Gemini API key configured, using mock response');
       await this.delay(1500);
@@ -40,34 +41,51 @@ class GeminiAPI {
       };
     }
 
-    return this.scanExpiryLabelReal(imageFile);
+    return this.scanExpiryLabelReal(imageFile, productsDatabase);
   }
 
   /**
    * Real implementation with Gemini Vision API
    */
-  async scanExpiryLabelReal(imageFile) {
+  async scanExpiryLabelReal(imageFile, productsDatabase = []) {
     try {
       console.log('📸 Scanning with Gemini Vision API...');
 
       // Convert image to base64
       const base64Image = await this.fileToBase64(imageFile);
 
+      // Prepare database context (sample of 20 products for reference)
+      const productSamples = productsDatabase.slice(0, 20).map(p => ({
+        id: p.Product_ID,
+        name: p.Product_Name,
+        lot: p.LOT_Number
+      }));
+
+      const databaseContext = productSamples.length > 0
+        ? `\n\nKnown products in our database (for reference):\n${JSON.stringify(productSamples, null, 2)}`
+        : '';
+
       // Prepare Gemini Vision API request
       const payload = {
         contents: [{
           parts: [
             {
-              text: `You are analyzing a product label image. Extract the following information and return ONLY a valid JSON object with no additional text:
+              text: `You are analyzing a product label image for an airline catering inventory system. Extract the following information and return ONLY a valid JSON object with no additional text:
 
 {
-  "Product_ID": "the product ID or code (e.g., MLK003, COF006)",
-  "LOT_Number": "the LOT number (e.g., LOT-A96, LOT-E19)",
+  "Product_ID": "the product ID or code (e.g., MLK003, COF006, DRK024)",
+  "LOT_Number": "the LOT number (e.g., LOT-A96, LOT-E19, LOT-B23)",
   "Expiry_Date": "the expiry date in YYYY-MM-DD format",
-  "Product_Name": "the product name"
+  "Product_Name": "the product name (e.g., Still Water 0.5L, Chocolate Bar, Coffee)"
 }
 
-If you cannot find a field, use "Unknown" as the value. Return ONLY the JSON object, nothing else.`
+IMPORTANT:
+- Look for any text that could be a product code, LOT number, or expiry date
+- Expiry dates may be labeled as "EXP", "Best Before", "Use By", "BB", or similar
+- If you see multiple dates, choose the expiration/best-before date
+- Product names should match common airline catering items${databaseContext}
+
+If you cannot find a field with certainty, use "Unknown" as the value. Return ONLY the JSON object, nothing else.`
             },
             {
               inline_data: {
