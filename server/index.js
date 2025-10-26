@@ -146,20 +146,41 @@ app.post('/api/users/login', async (req, res) => {
 });
 
 // Eliminar producto por ID
-app.delete('/api/expiration/:id', async (req, res) => {
+app.delete('/api/expiration/:lotNumber', async (req, res) => {
   try {
-    const { id } = req.params;
+    const { lotNumber } = req.params;
     
-    // Eliminar de la base de datos
-    const query = 'DELETE FROM expiration WHERE id = ?';
-    await db.execute(query, [id]);
+    console.log('Attempting to delete product with LOT Number:', lotNumber);
     
-    res.json({ success: true, message: 'Product deleted successfully' });
+    if (!lotNumber) {
+      return res.status(400).json({ error: 'LOT Number is required' });
+    }
+
+    // CAMBIAR: Eliminar por lotnumber (único)
+    const query = 'DELETE FROM expiration WHERE lot_number = ?';
+    const [result] = await db.execute(query, [lotNumber]);
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    
+    console.log(`Product with LOT ${lotNumber} deleted successfully`);
+    res.json({ 
+      success: true, 
+      message: 'Product deleted successfully',
+      deletedLotNumber: lotNumber 
+    });
+    
   } catch (error) {
     console.error('Delete product error:', error);
-    res.status(500).json({ error: 'Failed to delete product' });
+    res.status(500).json({ 
+      error: 'Failed to delete product',
+      details: error.message 
+    });
   }
 });
+
+
 
 // Iniciar servidor
 initDB().then(() => {

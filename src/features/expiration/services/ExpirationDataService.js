@@ -34,9 +34,9 @@ export class ExpirationDataService {
     }
   }
 
-  static async deleteProduct(productId) {
+  static async deleteProduct(lotNumber) {
     try {
-      const res = await fetch(`${API_BASE_URL}/expiration/${productId}`, {
+      const res = await fetch(`${API_BASE_URL}/expiration/${lotNumber}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'

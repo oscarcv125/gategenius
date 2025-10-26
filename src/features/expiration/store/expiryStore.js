@@ -49,23 +49,24 @@ export const useExpiryStore = create((set, get) => ({
     };
   },
 
-  deleteProduct: async (productId) => {
+  deleteProduct: async (lotNumber) => {
     set({ deleting: true });
     try {
       // Llamar al backend
-      await ExpirationDataService.deleteProduct(productId);
+      await ExpirationDataService.deleteProduct(lotNumber);
       
-      // Actualizar estado local inmediatamente
+      // Actualizar estado local inmediatamente (eliminar por LOT)
       const currentProducts = get().products;
-      const updatedProducts = currentProducts.filter(p => p.id !== productId);
+      const updatedProducts = currentProducts.filter(p => 
+        (p.LOT_Number || p.lotnumber) !== lotNumber
+      );
       
       set({ 
         products: updatedProducts,
         deleting: false
       });
 
-      // Opcional: mensaje de éxito
-      console.log('Product deleted successfully');
+      console.log(`Product with LOT ${lotNumber} deleted successfully`);
       
     } catch (error) {
       set({ deleting: false });

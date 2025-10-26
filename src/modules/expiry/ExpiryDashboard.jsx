@@ -27,23 +27,26 @@ export default function ExpiryDashboard() {
   }, [loadData]);
 
   const handleDeleteProduct = async (product) => {
-    // Extrae los datos del producto con fallbacks seguros
+    // Usar LOT Number (único) en lugar de Product_ID (se repite)
     const productName = product?.Product_Name ?? product?.product_name ?? 'Unknown Product';
-    const productId = product?.id ?? product?.Product_ID ?? product?.product_id;
+    const lotNumber = product?.LOT_Number ?? product?.lotnumber ?? product?.lot_number;
     
-    if (!productId) {
-      alert('Error: No se pudo identificar el producto');
+    if (!lotNumber) {
+      alert('Error: No se pudo identificar el lote del producto');
       return;
     }
 
     const confirmed = window.confirm(
-      `¿Estás seguro que quieres eliminar "${productName}"?`
+      `¿Estás seguro que quieres eliminar "${productName}" (LOT: ${lotNumber})?`
     );
     
     if (!confirmed) return;
 
     try {
-      await deleteProduct(productId);
+      await deleteProduct(lotNumber); // Elimina por LOT Number
+      // El estado se actualiza automáticamente en el store
+      // Las tarjetas (Critical, Warning, Value at Risk) se recalculan automáticamente
+      // La tabla se actualiza automáticamente
     } catch (error) {
       alert('Error al eliminar el producto. Inténtalo de nuevo.');
     }
@@ -149,7 +152,7 @@ export default function ExpiryDashboard() {
                   const isExpired = daysUntilExpiry < 0;
 
                   return (
-                    <div key={item?.id || lotNumber || index} className="bg-white rounded-lg p-4 border-l-4 border-red-500">
+                    <div key={lotNumber || index} className="bg-white rounded-lg p-4 border-l-4 border-red-500">
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="flex items-center space-x-2">
@@ -202,7 +205,7 @@ export default function ExpiryDashboard() {
                   const daysUntilExpiry = item?.Days_Until_Expiry ?? item?.days_until_expiry ?? 0;
 
                   return (
-                    <div key={item?.id || lotNumber || index} className="bg-white rounded-lg p-3 border-l-4 border-yellow-400">
+                    <div key={lotNumber || index} className="bg-white rounded-lg p-3 border-l-4 border-yellow-400">
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="font-medium text-gray-900">{productName}</div>
