@@ -13,8 +13,13 @@ export class ProductivityBusinessLogic {
    * @returns {number} Total time in hours
    */
   static getTotalTime(drawers) {
-    const totalMinutes = drawers.reduce((sum, d) => sum + d.Estimated_Time, 0);
-    return minutesToHours(totalMinutes);
+  const totalMinutes = drawers.reduce((sum, d) => {
+    const m = Number(d.Estimated_Time);
+    return sum + (Number.isFinite(m) ? m : 0);
+    }, 0);
+    // a horas con 1 decimal
+    const hours = Math.round((totalMinutes / 60) * 10) / 10;
+    return Number.isFinite(hours) ? hours : 0;
   }
 
   /**
@@ -25,14 +30,21 @@ export class ProductivityBusinessLogic {
    */
   static calculateWorkforce(drawers, shiftHours = 8) {
     const totalHours = this.getTotalTime(drawers);
-    const workersNeeded = calculateWorkersNeeded(totalHours, shiftHours);
-    const utilization = calculateUtilization(totalHours, workersNeeded, shiftHours);
+    const hours = Number.isFinite(totalHours) ? totalHours : 0;
+    const shift = Number.isFinite(shiftHours) && shiftHours > 0 ? shiftHours : 8;
+
+    const workersNeeded = Math.ceil(hours / shift);
+    const workers = Number.isFinite(workersNeeded) ? Math.max(0, workersNeeded) : 0;
+
+    const utilization = workers > 0
+      ? Math.round((hours / (workers * shift)) * 100)
+      : 0;
 
     return {
-      workers_needed: workersNeeded,
-      shift_hours: shiftHours,
-      total_hours: totalHours,
-      utilization: utilization
+      workers_needed: workers,
+      shift_hours: shift,
+      total_hours: hours,
+      utilization
     };
   }
 
