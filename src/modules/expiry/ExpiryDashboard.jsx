@@ -75,14 +75,14 @@ export default function ExpiryDashboard() {
         />
         <StatCard
           title="Critical (Today)"
-          value={stats.critical_units}
+          value={`${stats.critical_units} units`}
           subtitle={`${stats.critical_count} products`}
           icon={AlertTriangle}
           color="red"
         />
         <StatCard
           title="Warning (This Week)"
-          value={stats.warning_units}
+          value={`${stats.warning_units} units`}
           subtitle={`${stats.warning_count} products`}
           icon={Calendar}
           color="yellow"
