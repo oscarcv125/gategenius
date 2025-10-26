@@ -3,84 +3,20 @@
  * Handles all data loading and parsing for expiration module
  */
 
-import { parseCSV, validateCSVData } from '../../../shared/utils/csvParser';
-import { calculateDaysUntilExpiry } from '../utils/expirationCalculations';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
 
-export class ExpirationDataService {
-  static CSV_PATH = '/data/expiration.csv';
-
-  static REQUIRED_FIELDS = [
-    'Product_ID',
-    'Product_Name',
-    'LOT_Number',
-    'Expiry_Date',
-    'Quantity'
-  ];
-
-  /**
-   * Load expiration data from CSV
-   * @returns {Promise<Array>} Transformed expiration data
-   */
+export class ExpiryDataService {
   static async loadData() {
-    try {
-      console.log('📦 Loading expiration data...');
-
-      const rawData = await parseCSV(this.CSV_PATH);
-
-      // Validate required fields
-      const validation = validateCSVData(rawData, this.REQUIRED_FIELDS);
-      if (!validation.isValid) {
-        throw new Error(`Invalid CSV data: ${validation.errors.join(', ')}`);
-      }
-
-      const transformedData = this.transformData(rawData);
-
-      console.log('✅ Expiration data loaded:', transformedData.length, 'products');
-      return transformedData;
-    } catch (error) {
-      console.error('❌ Failed to load expiration data:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Transform raw CSV data into structured format
-   * @param {Array} rawData - Raw CSV data
-   * @returns {Array} Transformed data
-   */
-  static transformData(rawData) {
-    return rawData.map(item => ({
-      Product_ID: item.Product_ID,
-      Product_Name: item.Product_Name,
-      Weight_or_Volume: item.Weight_or_Volume,
-      LOT_Number: item.LOT_Number,
-      Expiry_Date: item.Expiry_Date,
-      Quantity: parseInt(item.Quantity) || 0,
-      // Computed fields
-      Expiry_Date_Parsed: new Date(item.Expiry_Date),
-      Days_Until_Expiry: calculateDaysUntilExpiry(item.Expiry_Date)
+    const res = await fetch(`${API_BASE_URL}/expiration`);
+    if (!res.ok) throw new Error(`Expiration API error: ${res.status} ${res.statusText}`);
+    const rows = await res.json();
+    return rows.map(r => ({
+      Product_ID: r.Product_ID ?? r.product_id,
+      Product_Name: r.Product_Name ?? r.product_name,
+      Weight_or_Volume: r.Weight_or_Volume ?? r.weight_or_volume,
+      LOT_Number: r.LOT_Number ?? r.lot_number,
+      Expiry_Date: r.Expiry_Date ?? r.expiry_date,
+      Quantity: Number(r.Quantity ?? r.quantity ?? 0)
     }));
-  }
-
-  /**
-   * Validate product data structure
-   * @param {Object} product - Product object
-   * @returns {Object} Validation result
-   */
-  static validateProduct(product) {
-    const errors = [];
-
-    if (!product.Product_ID) errors.push('Product_ID is required');
-    if (!product.Product_Name) errors.push('Product_Name is required');
-    if (!product.LOT_Number) errors.push('LOT_Number is required');
-    if (!product.Expiry_Date) errors.push('Expiry_Date is required');
-    if (typeof product.Quantity !== 'number' || product.Quantity < 0) {
-      errors.push('Quantity must be a positive number');
-    }
-
-    return {
-      isValid: errors.length === 0,
-      errors
-    };
   }
 }

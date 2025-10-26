@@ -2,62 +2,20 @@
  * Productivity Data Service
  * Handles all data loading and parsing for productivity module
  */
-
-import { parseCSV, validateCSVData } from '../../../shared/utils/csvParser';
-import { estimateDrawerTime } from '../utils/productivityCalculations';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
 
 export class ProductivityDataService {
-  static CSV_PATH = '/data/productivity.csv';
-
-  static REQUIRED_FIELDS = [
-    'Drawer_ID',
-    'Flight_Type',
-    'Drawer_Category',
-    'Total_Items',
-    'Unique_Item_Types'
-  ];
-
-  /**
-   * Load productivity data from CSV
-   * @returns {Promise<Array>} Transformed productivity data
-   */
   static async loadData() {
-    try {
-      console.log('📦 Loading productivity data...');
-
-      const rawData = await parseCSV(this.CSV_PATH);
-
-      // Validate required fields
-      const validation = validateCSVData(rawData, this.REQUIRED_FIELDS);
-      if (!validation.isValid) {
-        throw new Error(`Invalid CSV data: ${validation.errors.join(', ')}`);
-      }
-
-      const transformedData = this.transformData(rawData);
-
-      console.log('✅ Productivity data loaded:', transformedData.length, 'drawers');
-      return transformedData;
-    } catch (error) {
-      console.error('❌ Failed to load productivity data:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Transform raw CSV data into structured format
-   * @param {Array} rawData - Raw CSV data
-   * @returns {Array} Transformed data
-   */
-  static transformData(rawData) {
-    return rawData.map(item => ({
-      Drawer_ID: item.Drawer_ID,
-      Flight_Type: item.Flight_Type,
-      Drawer_Category: item.Drawer_Category,
-      Total_Items: parseInt(item.Total_Items) || 0,
-      Unique_Item_Types: parseInt(item.Unique_Item_Types) || 0,
-      Item_List: item.Item_List ? item.Item_List.split(',').map(i => i.trim()) : [],
-      // Computed field
-      Estimated_Time: estimateDrawerTime(item)
+    const res = await fetch(`${API_BASE_URL}/productivity`);
+    if (!res.ok) throw new Error(`Productivity API error: ${res.status} ${res.statusText}`);
+    const rows = await res.json();
+    return rows.map(r => ({
+      Drawer_ID: r.Drawer_ID ?? r.drawer_id,
+      Flight_Type: r.Flight_Type ?? r.flight_type,
+      Drawer_Category: r.Drawer_Category ?? r.drawer_category,
+      Total_Items: Number(r.Total_Items ?? r.total_items ?? 0),
+      Unique_Item_Types: Number(r.Unique_Item_Types ?? r.unique_item_types ?? 0),
+      Item_List: r.Item_List ?? r.item_list
     }));
   }
 }
