@@ -1,7 +1,8 @@
 /**
  * Consumption Data Service
  */
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import Papa from 'papaparse';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
 import { parseCSV, validateCSVData } from '../../../shared/utils/csvParser';
 import { calculateConsumptionRate, calculateWasteCost } from '../utils/consumptionCalculations';
 
@@ -41,8 +42,51 @@ export class ConsumptionDataService {
 });
 
     } catch (err) {
-      console.error('Consumption fetch failed', err);
-      throw err;
+      console.warn('API not available, falling back to CSV:', err.message);
+      return await this.loadFromCSV();
     }
+  }
+
+  static async loadFromCSV() {
+    const response = await fetch('/data/consumption.csv');
+    const csvText = await response.text();
+
+    return new Promise((resolve, reject) => {
+      Papa.parse(csvText, {
+        header: true,
+        skipEmptyLines: true,
+        transformHeader: (header) => header.trim(),
+        complete: (results) => {
+          const rows = results.data.map(item => {
+            const toNum = (v) => {
+              const n = Number(v);
+              return Number.isFinite(n) ? n : 0;
+            };
+
+            return {
+              Flight_ID: item.Flight_ID,
+              Origin: item.Origin,
+              Date: item.Date,
+              Flight_Type: item.Flight_Type,
+              Service_Type: item.Service_Type,
+              Passenger_Count: toNum(item.Passenger_Count),
+              Product_ID: item.Product_ID,
+              Product_Name: item.Product_Name,
+              Standard_Specification_Qty: toNum(item.Standard_Specification_Qty),
+              Quantity_Returned: toNum(item.Quantity_Returned),
+              Quantity_Consumed: toNum(item.Quantity_Consumed),
+              Unit_Cost: toNum(item.Unit_Cost),
+              Crew_Feedback: item.Crew_Feedback || ''
+            };
+          });
+          console.log('✅ Loaded consumption.csv:', rows.length, 'records');
+          resolve(rows);
+        },
+        error: (error) => {
+          console.error('❌ Error parsing consumption.csv:', error);
+          reject(error);
+        }
+      });
+    });
   }
 }
