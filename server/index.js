@@ -53,7 +53,17 @@ app.get('/api/consumption', async (req, res) => {
 // Obtener datos de expiration
 app.get('/api/expiration', async (req, res) => {
   try {
-    const [rows] = await db.execute('SELECT * FROM expiration ORDER BY Expiry_Date ASC');
+    const [rows] = await db.execute(`
+      SELECT 
+        Product_ID,
+        Product_Name,
+        Weight_or_Volume,
+        LOT_Number,
+        DATE(Expiry_Date) as Expiry_Date,
+        Quantity
+      FROM expiration 
+      ORDER BY Expiry_Date ASC
+    `);
     res.json(rows);
   } catch (error) {
     res.status(500).json({ error: error.message });

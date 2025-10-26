@@ -4,7 +4,7 @@
  */
 
 import { create } from 'zustand';
-import { ExpirationDataService } from '../services/ExpirationDataService';
+import { ExpiryDataService } from '../services/ExpirationDataService';
 import { ExpirationBusinessLogic } from '../services/ExpirationBusinessLogic';
 import { calculateDaysUntilExpiry } from '../utils/expirationCalculations';
 
@@ -19,7 +19,7 @@ export const useExpiryStore = create((set, get) => ({
   loadData: async () => {
     set({ loading: true, error: null });
     try {
-      const data = await ExpirationDataService.loadData();
+      const data = await ExpiryDataService.loadData();
       set({
         products: data,
         loading: false,
