@@ -26,7 +26,16 @@ export default function ExpiryDashboard() {
     loadData();
   }, [loadData]);
 
-  const handleDeleteProduct = async (productId, productName) => {
+  const handleDeleteProduct = async (product) => {
+    // Extrae los datos del producto con fallbacks seguros
+    const productName = product?.Product_Name ?? product?.product_name ?? 'Unknown Product';
+    const productId = product?.id ?? product?.Product_ID ?? product?.product_id;
+    
+    if (!productId) {
+      alert('Error: No se pudo identificar el producto');
+      return;
+    }
+
     const confirmed = window.confirm(
       `¿Estás seguro que quieres eliminar "${productName}"?`
     );
