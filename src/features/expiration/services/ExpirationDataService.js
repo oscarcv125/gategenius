@@ -33,4 +33,24 @@ export class ExpirationDataService {
       throw error;
     }
   }
+
+  static async deleteProduct(productId) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/expiration/${productId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!res.ok) {
+        throw new Error(`Delete failed: ${res.status} ${res.statusText}`);
+      }
+
+      return await res.json();
+    } catch (error) {
+      console.error('Failed to delete product:', error);
+      throw error;
+    }
+  }
 }

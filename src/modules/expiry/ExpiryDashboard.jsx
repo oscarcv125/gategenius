@@ -8,12 +8,6 @@ import { formatDaysUntilExpiry } from '../../utils/dateHelpers';
 
 /**
  * Expiration Intelligence Dashboard
- *
- * Features:
- * - Critical expiry alerts (expiring today)
- * - Warning alerts (expiring this week)
- * - Camera scanning for LOT numbers
- * - Auto-rotation recommendations
  */
 export default function ExpiryDashboard() {
   const {
@@ -23,13 +17,35 @@ export default function ExpiryDashboard() {
     getCriticalItems,
     getWarningItems,
     getWasteStats,
-    removeProduct,
-    addScannedProduct
+    deleteProduct,
+    addScannedProduct,
+    deleting
   } = useExpiryStore();
 
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  const handleDeleteProduct = async (productId, productName) => {
+    const confirmed = window.confirm(
+      `¿Estás seguro que quieres eliminar "${productName}"?`
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      await deleteProduct(productId);
+    } catch (error) {
+      alert('Error al eliminar el producto. Inténtalo de nuevo.');
+    }
+  };
+
+  const handleAssignToFlight = (item) => {
+    // Navigate to Smart Assignment tab
+    window.dispatchEvent(new CustomEvent('navigateToSmartAssignment', {
+      detail: { product: item }
+    }));
+  };
 
   if (loading) {
     return (
@@ -42,16 +58,23 @@ export default function ExpiryDashboard() {
     );
   }
 
-  const criticalItems = getCriticalItems();
-  const warningItems = getWarningItems();
-  const stats = getWasteStats();
+  const criticalItems = getCriticalItems() || [];
+  const warningItems = getWarningItems() || [];
+  const stats = getWasteStats() || {
+    total_products: 0,
+    critical_units: 0,
+    critical_count: 0,
+    warning_units: 0,
+    warning_count: 0,
+    estimated_critical_value: 0
+  };
 
   // Prepare report data
   const reportData = {
     stats,
     criticalItems,
     warningItems,
-    allProducts: products
+    allProducts: products || []
   };
 
   return (
@@ -89,7 +112,7 @@ export default function ExpiryDashboard() {
         />
         <StatCard
           title="Value at Risk"
-          value={`$${stats.estimated_critical_value.toFixed(2)}`}
+          value={`$${(stats.estimated_critical_value || 0).toFixed(2)}`}
           subtitle="Expiring today"
           icon={AlertTriangle}
           color="red"
@@ -104,35 +127,46 @@ export default function ExpiryDashboard() {
             <div className="ml-3 flex-1">
               <h3 className="text-lg font-bold text-red-900">CRITICAL EXPIRY ALERTS</h3>
               <p className="text-sm text-red-700 mt-1">
-                {criticalItems.length} products expire TODAY (Oct 24, 2025)
+                {criticalItems.length} products expire TODAY
               </p>
               <div className="mt-4 space-y-3">
-                {criticalItems.slice(0, 5).map((item) => (
-                  <div key={item.LOT_Number} className="bg-white rounded-lg p-4 border-l-4 border-red-500">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <div className="flex items-center space-x-2">
-                          <span className="font-bold text-gray-900">{item.Quantity} units</span>
-                          <span className="text-gray-600">{item.Product_Name}</span>
+                {criticalItems.slice(0, 5).map((item, index) => {
+                  // Safe access to properties
+                  const quantity = item?.Quantity ?? item?.quantity ?? 0;
+                  const productName = item?.Product_Name ?? item?.product_name ?? 'Unknown Product';
+                  const lotNumber = item?.LOT_Number ?? item?.lot_number ?? 'N/A';
+                  const expiryDate = item?.Expiry_Date ?? item?.expiry_date ?? 'N/A';
+                  const daysUntilExpiry = item?.Days_Until_Expiry ?? item?.days_until_expiry ?? 0;
+                  const isExpired = daysUntilExpiry < 0;
+
+                  return (
+                    <div key={item?.id || lotNumber || index} className="bg-white rounded-lg p-4 border-l-4 border-red-500">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="flex items-center space-x-2">
+                            <span className="font-bold text-gray-900">{quantity} units</span>
+                            <span className="text-gray-600">{productName}</span>
+                          </div>
+                          <div className="text-sm text-gray-500 mt-1">
+                            LOT: {lotNumber} | Expires: {expiryDate}
+                          </div>
                         </div>
-                        <div className="text-sm text-gray-500 mt-1">
-                          LOT: {item.LOT_Number} | Expires: {item.Expiry_Date}
-                        </div>
+                        <button
+                          onClick={() => !isExpired && handleAssignToFlight(item)}
+                          disabled={isExpired}
+                          className={`text-sm px-4 py-2 rounded font-medium ${
+                            isExpired 
+                              ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                              : 'bg-purple-600 text-white hover:bg-purple-700'
+                          }`}
+                          title={isExpired ? 'Cannot assign expired products' : 'Assign to flight'}
+                        >
+                          {isExpired ? 'Expired' : 'Assign to Flight'}
+                        </button>
                       </div>
-                      <button
-                        className="btn-primary text-sm"
-                        onClick={() => {
-                          // Navigate to Smart Assignment tab
-                          window.dispatchEvent(new CustomEvent('navigateToSmartAssignment', {
-                            detail: { product: item }
-                          }));
-                        }}
-                      >
-                        Assign to Flight
-                      </button>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -150,21 +184,37 @@ export default function ExpiryDashboard() {
                 {warningItems.length} products expiring in the next 7 days
               </p>
               <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-                {warningItems.slice(0, 6).map((item) => (
-                  <div key={item.LOT_Number} className="bg-white rounded-lg p-3 border-l-4 border-yellow-400">
-                    <div className="flex justify-between">
-                      <div>
-                        <div className="font-medium text-gray-900">{item.Product_Name}</div>
-                        <div className="text-sm text-gray-600 mt-1">
-                          {item.Quantity} units | LOT: {item.LOT_Number}
+                {warningItems.slice(0, 6).map((item, index) => {
+                  // Safe access to properties
+                  const quantity = item?.Quantity ?? item?.quantity ?? 0;
+                  const productName = item?.Product_Name ?? item?.product_name ?? 'Unknown Product';
+                  const lotNumber = item?.LOT_Number ?? item?.lot_number ?? 'N/A';
+                  const expiryDate = item?.Expiry_Date ?? item?.expiry_date ?? 'N/A';
+                  const daysUntilExpiry = item?.Days_Until_Expiry ?? item?.days_until_expiry ?? 0;
+
+                  return (
+                    <div key={item?.id || lotNumber || index} className="bg-white rounded-lg p-3 border-l-4 border-yellow-400">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="font-medium text-gray-900">{productName}</div>
+                          <div className="text-sm text-gray-600 mt-1">
+                            {quantity} units | LOT: {lotNumber}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            Expires in {formatDaysUntilExpiry ? formatDaysUntilExpiry(daysUntilExpiry) : `${daysUntilExpiry} days`} ({expiryDate})
+                          </div>
                         </div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          Expires in {formatDaysUntilExpiry(item.Days_Until_Expiry)} ({item.Expiry_Date})
-                        </div>
+                        <button
+                          onClick={() => handleAssignToFlight(item)}
+                          className="btn-primary text-sm ml-3"
+                          title="Assign to flight"
+                        >
+                          Assign to Flight
+                        </button>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -173,7 +223,7 @@ export default function ExpiryDashboard() {
 
       {/* Camera Scanner */}
       <CameraScanner
-        products={products}
+        products={products || []}
         onScanComplete={(scanData) => {
           console.log('📦 Scan complete:', scanData);
 
@@ -193,7 +243,10 @@ export default function ExpiryDashboard() {
       />
 
       {/* All Products Table */}
-      <ProductTable products={products} onRemoveProduct={removeProduct} />
+      <ProductTable 
+        products={products || []} 
+        onRemoveProduct={handleDeleteProduct}
+      />
     </div>
   );
 }

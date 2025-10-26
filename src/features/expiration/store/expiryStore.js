@@ -49,10 +49,29 @@ export const useExpiryStore = create((set, get) => ({
     };
   },
 
-  removeProduct: (lotNumber) => {
-    set(state => ({
-      products: state.products.filter(p => p.LOT_Number !== lotNumber)
-    }));
+  deleteProduct: async (productId) => {
+    set({ deleting: true });
+    try {
+      // Llamar al backend
+      await ExpirationDataService.deleteProduct(productId);
+      
+      // Actualizar estado local inmediatamente
+      const currentProducts = get().products;
+      const updatedProducts = currentProducts.filter(p => p.id !== productId);
+      
+      set({ 
+        products: updatedProducts,
+        deleting: false
+      });
+
+      // Opcional: mensaje de éxito
+      console.log('Product deleted successfully');
+      
+    } catch (error) {
+      set({ deleting: false });
+      console.error('Failed to delete product:', error);
+      throw error;
+    }
   },
 
   addScannedProduct: (productData) => {

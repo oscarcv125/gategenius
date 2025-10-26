@@ -147,6 +147,22 @@ app.post('/api/users/login', async (req, res) => {
   }
 });
 
+// Eliminar producto por ID
+app.delete('/api/expiration/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Eliminar de la base de datos
+    const query = 'DELETE FROM expiration WHERE id = ?';
+    await db.execute(query, [id]);
+    
+    res.json({ success: true, message: 'Product deleted successfully' });
+  } catch (error) {
+    console.error('Delete product error:', error);
+    res.status(500).json({ error: 'Failed to delete product' });
+  }
+});
+
 // Iniciar servidor
 initDB().then(() => {
   app.listen(PORT, () => {
