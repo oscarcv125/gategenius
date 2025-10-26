@@ -12,22 +12,34 @@ export class ConsumptionDataService {
       if (!res.ok) throw new Error(`Consumption API error: ${res.status} ${res.statusText}`);
       const rows = await res.json();
 
-      // Normaliza a las claves esperadas por el store/UI
-      return rows.map(item => ({
-        Flight_ID: item.Flight_ID ?? item.flight_id ?? item.FlightId,
-        Origin: item.Origin ?? item.origin,
-        Date: item.Date ?? item.flight_date,
-        Flight_Type: item.Flight_Type ?? item.flight_type,
-        Service_Type: item.Service_Type ?? item.service_type,
-        Passenger_Count: Number(item.Passenger_Count ?? item.passenger_count ?? 0),
-        Product_ID: item.Product_ID ?? item.product_id,
-        Product_Name: item.Product_Name ?? item.product_name,
-        Standard_Specification_Qty: Number(item.Standard_Specification_Qty ?? item.standard_specification_qty ?? 0),
-        Quantity_Returned: Number(item.Quantity_Returned ?? item.quantity_returned ?? 0),
-        Quantity_Consumed: Number(item.Quantity_Consumed ?? item.quantity_consumed ?? 0),
-        Unit_Cost: Number(item.Unit_Cost ?? item.unit_cost ?? 0),
-        Crew_Feedback: item.Crew_Feedback ?? item.crew_feedback ?? ''
-      }));
+      return rows.map(item => {
+    const toNum = (v) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
+  };
+
+  const rawDate = item.Date ?? item.flight_date ?? '';
+  const dateOnly = typeof rawDate === 'string' && rawDate.includes('T')
+    ? rawDate.split('T')[0]
+    : rawDate;
+
+  return {
+    Flight_ID: item.Flight_ID ?? item.flight_id,
+    Origin: item.Origin ?? item.origin,
+    Date: dateOnly, // <- fecha limpia sin T...Z
+    Flight_Type: item.Flight_Type ?? item.flight_type,
+    Service_Type: item.Service_Type ?? item.service_type,
+    Passenger_Count: toNum(item.Passenger_Count ?? item.passenger_count),
+    Product_ID: item.Product_ID ?? item.product_id,
+    Product_Name: item.Product_Name ?? item.product_name,
+    Standard_Specification_Qty: toNum(item.Standard_Specification_Qty ?? item.standard_specification_qty),
+    Quantity_Returned: toNum(item.Quantity_Returned ?? item.quantity_returned),
+    Quantity_Consumed: toNum(item.Quantity_Consumed ?? item.quantity_consumed),
+    Unit_Cost: toNum(item.Unit_Cost ?? item.unit_cost),
+    Crew_Feedback: item.Crew_Feedback ?? item.crew_feedback ?? ''
+  };
+});
+
     } catch (err) {
       console.error('Consumption fetch failed', err);
       throw err;

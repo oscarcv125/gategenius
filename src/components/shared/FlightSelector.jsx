@@ -55,8 +55,9 @@ export default function FlightSelector({ flights, selectedFlight, onSelect }) {
                   <span className="font-medium text-gray-900">{flight.Service_Type}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Date:</span>
-                  <span className="text-xs text-gray-700">{flight.Date}</span>
+                  <p className="font-medium text-gray-900">
+                    {(flight.Date || flight.flight_date || '').toString().split('T')[0] || '—'}
+                  </p>
                 </div>
               </div>
             </button>

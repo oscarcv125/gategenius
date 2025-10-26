@@ -147,22 +147,33 @@ export class ConsumptionBusinessLogic {
    * @param {Array} flights - Array of flight items
    * @returns {Object} Waste statistics
    */
-  static getWasteStats(flights) {
-    const totalWaste = flights.reduce((sum, f) => sum + f.Waste_Cost, 0);
-    const totalReturned = flights.reduce((sum, f) => sum + f.Quantity_Returned, 0);
-    const totalConsumed = flights.reduce((sum, f) => sum + f.Quantity_Consumed, 0);
-    const totalLoaded = totalConsumed + totalReturned;
+  getWasteStats(flights) {
+  const toNum = (v) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
+  };
 
-    const uniqueFlights = this.getUniqueFlights(flights);
+  const total_waste_cost = flights.reduce((sum, f) => {
+    const line = toNum(f.Quantity_Returned) * toNum(f.Unit_Cost);
+    return sum + line;
+  }, 0);
 
-    return {
-      total_waste_cost: Math.round(totalWaste * 100) / 100,
-      total_returned_units: totalReturned,
-      total_consumed_units: totalConsumed,
-      overall_consumption_rate: Math.round((totalConsumed / totalLoaded) * 100),
-      unique_flights: uniqueFlights.length
-    };
-  }
+  const total_returned_units = flights.reduce((sum, f) => sum + toNum(f.Quantity_Returned), 0);
+
+  const consumed = flights.reduce((s, f) => s + toNum(f.Quantity_Consumed), 0);
+  const std = flights.reduce((s, f) => s + toNum(f.Standard_Specification_Qty), 0);
+  const overall_consumption_rate = std ? Math.round((consumed / std) * 100) : 0;
+
+  const unique_flights = new Set(flights.map(f => f.Flight_ID)).size;
+
+  return {
+    total_waste_cost,
+    total_returned_units,
+    overall_consumption_rate,
+    unique_flights
+  };
+}
+
 
   /**
    * Predict consumption for a product on a specific flight type
