@@ -1,12 +1,5 @@
-/**
- * Expiration Store (Zustand)
- * State management for expiration module
- */
-
 import { create } from 'zustand';
-import { ExpiryDataService } from '../services/ExpirationDataService';
-import { ExpirationBusinessLogic } from '../services/ExpirationBusinessLogic';
-import { calculateDaysUntilExpiry } from '../utils/expirationCalculations';
+import { ExpirationDataService } from '../services/ExpirationDataService';
 
 export const useExpiryStore = create((set, get) => ({
   // State
@@ -19,7 +12,7 @@ export const useExpiryStore = create((set, get) => ({
   loadData: async () => {
     set({ loading: true, error: null });
     try {
-      const data = await ExpiryDataService.loadData();
+      const data = await ExpirationDataService.loadData();
       set({
         products: data,
         loading: false,
@@ -30,96 +23,41 @@ export const useExpiryStore = create((set, get) => ({
     }
   },
 
-  removeProduct: (productToRemove) => {
-    set((state) => ({
-      products: state.products.filter(
-        p => !(p.LOT_Number === productToRemove.LOT_Number && p.Product_ID === productToRemove.Product_ID)
-      )
-    }));
-  },
-
-  /**
-   * Add a scanned product to the inventory
-   * @param {Object} scannedData - Product data from scanner
-   */
-  addScannedProduct: (scannedData) => {
-    set((state) => {
-      // Check if product already exists (by LOT_Number + Product_ID)
-      const exists = state.products.some(
-        p => p.LOT_Number === scannedData.LOT_Number &&
-             p.Product_ID === scannedData.Product_ID
-      );
-
-      if (exists) {
-        console.log('⚠️ Product already exists in database');
-        return state; // No change
-      }
-
-      // Add new product with calculated fields
-      const newProduct = {
-        Product_ID: scannedData.Product_ID || 'SCANNED',
-        Product_Name: scannedData.Product_Name || 'Scanned Product',
-        Weight_or_Volume: scannedData.Weight_or_Volume || '',
-        LOT_Number: scannedData.LOT_Number || 'Unknown',
-        Expiry_Date: scannedData.Expiry_Date || 'Unknown',
-        Quantity: parseInt(scannedData.Quantity) || 1,
-        Expiry_Date_Parsed: new Date(scannedData.Expiry_Date),
-        Days_Until_Expiry: calculateDaysUntilExpiry(scannedData.Expiry_Date),
-        _scanned: true, // Flag to identify scanned products
-        _scan_timestamp: new Date().toISOString()
-      };
-
-      console.log('✅ Added scanned product to inventory:', newProduct);
-
-      return {
-        products: [...state.products, newProduct]
-      };
-    });
-  },
-
-  // Computed/Selector functions - Use Business Logic
+  // Computed functions
   getCriticalItems: () => {
     const { products } = get();
-    return ExpirationBusinessLogic.getCriticalItems(products);
+    return products.filter(p => p.Days_Left !== null && p.Days_Left <= 0);
   },
 
   getWarningItems: () => {
     const { products } = get();
-    return ExpirationBusinessLogic.getWarningItems(products);
-  },
-
-  getExpiredItems: () => {
-    const { products } = get();
-    return ExpirationBusinessLogic.getExpiredItems(products);
-  },
-
-  getSortedByExpiry: () => {
-    const { products } = get();
-    return [...products].sort((a, b) => a.Days_Until_Expiry - b.Days_Until_Expiry);
-  },
-
-  getByLotNumber: (lotNumber) => {
-    const { products } = get();
-    return ExpirationBusinessLogic.getProductByLOT(products, lotNumber);
+    return products.filter(p => p.Days_Left !== null && p.Days_Left > 0 && p.Days_Left <= 7);
   },
 
   getWasteStats: () => {
     const { products } = get();
-    return ExpirationBusinessLogic.getWasteStats(products);
+    const criticalItems = products.filter(p => p.Days_Left !== null && p.Days_Left <= 0);
+    const warningItems = products.filter(p => p.Days_Left !== null && p.Days_Left > 0 && p.Days_Left <= 7);
+
+    return {
+      total_products: products.length,
+      critical_count: criticalItems.length,
+      critical_units: criticalItems.reduce((sum, p) => sum + p.Quantity, 0),
+      warning_count: warningItems.length,
+      warning_units: warningItems.reduce((sum, p) => sum + p.Quantity, 0),
+      estimated_critical_value: criticalItems.reduce((sum, p) => sum + (p.Quantity * 2.5), 0)
+    };
   },
 
-  getRotationRecommendations: () => {
-    const { products } = get();
-    return ExpirationBusinessLogic.getRotationRecommendations(products);
+  removeProduct: (lotNumber) => {
+    set(state => ({
+      products: state.products.filter(p => p.LOT_Number !== lotNumber)
+    }));
   },
 
-  searchProducts: (searchTerm) => {
-    const { products } = get();
-    return ExpirationBusinessLogic.searchProducts(products, searchTerm);
-  },
-
-  groupByCategory: () => {
-    const { products } = get();
-    return ExpirationBusinessLogic.groupByExpiryCategory(products);
+  addScannedProduct: (productData) => {
+    set(state => ({
+      products: [...state.products, { ...productData, id: Date.now() }]
+    }));
   }
 }));

@@ -59,9 +59,9 @@ app.get('/api/expiration', async (req, res) => {
         Product_Name,
         Weight_or_Volume,
         LOT_Number,
-        DATE(Expiry_Date) as Expiry_Date,
+        DATE(Expiry_Date) AS Expiry_Date,
         Quantity
-      FROM expiration 
+      FROM expiration
       ORDER BY Expiry_Date ASC
     `);
     res.json(rows);
