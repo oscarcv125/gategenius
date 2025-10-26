@@ -7,18 +7,24 @@
 import { minutesToHours, calculateWorkersNeeded, calculateUtilization } from '../utils/productivityCalculations';
 
 export class ProductivityBusinessLogic {
+  static REALITY_FACTOR = 0.61;
+
   /**
    * Get total estimated time for all drawers (in hours)
    * @param {Array} drawers - Array of drawers
    * @returns {number} Total time in hours
    */
   static getTotalTime(drawers) {
-  const totalMinutes = drawers.reduce((sum, d) => {
-    const m = Number(d.Estimated_Time);
-    return sum + (Number.isFinite(m) ? m : 0);
+    const totalMinutes = drawers.reduce((sum, d) => {
+      const m = Number(d.Estimated_Time);
+      return sum + (Number.isFinite(m) ? m : 0);
     }, 0);
-    // a horas con 1 decimal
-    const hours = Math.round((totalMinutes / 60) * 10) / 10;
+
+    // Aplicar factor de realidad para tiempos más precisos
+    const adjustedMinutes = totalMinutes * this.REALITY_FACTOR;
+    
+    // Convertir a horas con 1 decimal
+    const hours = Math.round((adjustedMinutes / 60) * 10) / 10;
     return Number.isFinite(hours) ? hours : 0;
   }
 
@@ -34,7 +40,7 @@ export class ProductivityBusinessLogic {
     const shift = Number.isFinite(shiftHours) && shiftHours > 0 ? shiftHours : 8;
 
     const workersNeeded = Math.ceil(hours / shift);
-    const workers = Number.isFinite(workersNeeded) ? Math.max(0, workersNeeded) : 0;
+    const workers = Number.isFinite(workersNeeded) ? Math.max(1, workersNeeded) : 1; // Mínimo 1 worker
 
     const utilization = workers > 0
       ? Math.round((hours / (workers * shift)) * 100)
@@ -44,7 +50,7 @@ export class ProductivityBusinessLogic {
       workers_needed: workers,
       shift_hours: shift,
       total_hours: hours,
-      utilization
+      utilization: Math.min(100, utilization) // Cap at 100%
     };
   }
 
@@ -57,7 +63,7 @@ export class ProductivityBusinessLogic {
     const categories = {};
 
     drawers.forEach(drawer => {
-      const cat = drawer.Drawer_Category;
+      const cat = drawer.Drawer_Category || 'Unknown';
       if (!categories[cat]) {
         categories[cat] = [];
       }
@@ -76,7 +82,7 @@ export class ProductivityBusinessLogic {
     const types = {};
 
     drawers.forEach(drawer => {
-      const type = drawer.Flight_Type;
+      const type = drawer.Flight_Type || 'Unknown';
       if (!types[type]) {
         types[type] = [];
       }
@@ -87,18 +93,24 @@ export class ProductivityBusinessLogic {
   }
 
   /**
-   * Get complexity statistics
+   * Get complexity statistics (TIEMPOS AJUSTADOS)
    * @param {Array} drawers - Array of drawers
    * @returns {Object} Complexity breakdown
    */
   static getComplexityStats(drawers) {
-    // Simple = < 5 minutes, Medium = 5-8 minutes, Complex = > 8 minutes
-    const simple = drawers.filter(d => d.Estimated_Time < 5);
-    const medium = drawers.filter(d => d.Estimated_Time >= 5 && d.Estimated_Time <= 8);
-    const complex = drawers.filter(d => d.Estimated_Time > 8);
+    // Aplicar factor de realidad a los tiempos estimados
+    const adjustedDrawers = drawers.map(d => ({
+      ...d,
+      Estimated_Time: (d.Estimated_Time || 0) * this.REALITY_FACTOR
+    }));
 
-    const avgTime = drawers.length > 0
-      ? Math.round((drawers.reduce((sum, d) => sum + d.Estimated_Time, 0) / drawers.length) * 10) / 10
+    // Simple = < 3 min, Medium = 3-5 min, Complex = > 5 min (más realista)
+    const simple = adjustedDrawers.filter(d => d.Estimated_Time < 3);
+    const medium = adjustedDrawers.filter(d => d.Estimated_Time >= 3 && d.Estimated_Time <= 5);
+    const complex = adjustedDrawers.filter(d => d.Estimated_Time > 5);
+
+    const avgTime = adjustedDrawers.length > 0
+      ? Math.round((adjustedDrawers.reduce((sum, d) => sum + d.Estimated_Time, 0) / adjustedDrawers.length) * 10) / 10
       : 0;
 
     return {
@@ -117,29 +129,29 @@ export class ProductivityBusinessLogic {
    */
   static getMostComplexDrawers(drawers, limit = 10) {
     return [...drawers]
-      .sort((a, b) => b.Estimated_Time - a.Estimated_Time)
+      .sort((a, b) => (b.Estimated_Time || 0) - (a.Estimated_Time || 0))
       .slice(0, limit);
   }
 
   /**
    * Calculate productivity benchmarks
    * @param {Array} drawers - Array of drawers
-   * @param {number} industryBenchmark - Industry standard drawers/hour (default: 6.5)
+   * @param {number} industryBenchmark - Industry standard drawers/hour (default: 10)
    * @returns {Object} Benchmark comparison
    */
-  static getBenchmarks(drawers, industryBenchmark = 6.5) {
+  static getBenchmarks(drawers, industryBenchmark = 10) {
     const totalDrawers = drawers.length;
     const totalTime = this.getTotalTime(drawers);
     const avgTimePerDrawer = totalTime * 60 / totalDrawers; // in minutes
 
-    const currentRate = 60 / avgTimePerDrawer; // drawers per hour
+    const currentRate = avgTimePerDrawer > 0 ? 60 / avgTimePerDrawer : 0; // drawers per hour
 
     return {
       total_drawers: totalDrawers,
       avg_time_per_drawer: Math.round(avgTimePerDrawer * 10) / 10,
       current_rate: Math.round(currentRate * 10) / 10,
       industry_benchmark: industryBenchmark,
-      performance_vs_benchmark: Math.round((currentRate / industryBenchmark) * 100)
+      performance_vs_benchmark: industryBenchmark > 0 ? Math.round((currentRate / industryBenchmark) * 100) : 0
     };
   }
 
@@ -157,16 +169,17 @@ export class ProductivityBusinessLogic {
       targetDrawers = drawers.filter(d => drawerIds.includes(d.Drawer_ID));
     }
 
-    const totalMinutes = targetDrawers.reduce((sum, d) => sum + d.Estimated_Time, 0);
-    const totalHours = minutesToHours(totalMinutes);
-    const workersNeeded = calculateWorkersNeeded(totalHours, shiftHours);
+    const totalMinutes = targetDrawers.reduce((sum, d) => sum + (d.Estimated_Time || 0), 0);
+    const adjustedMinutes = totalMinutes * this.REALITY_FACTOR; // Aplicar factor realista
+    const totalHours = adjustedMinutes / 60;
+    const workersNeeded = Math.ceil(totalHours / shiftHours);
 
     return {
       total_drawers: targetDrawers.length,
-      total_time_hours: totalHours,
-      workers_needed: workersNeeded,
+      total_time_hours: Math.round(totalHours * 10) / 10,
+      workers_needed: Math.max(1, workersNeeded),
       shift_duration: shiftHours,
-      status: workersNeeded <= 10 ? 'OPTIMAL' : 'PEAK_LOAD'
+      status: workersNeeded <= 2 ? 'OPTIMAL' : 'PEAK_LOAD'
     };
   }
 
@@ -176,25 +189,28 @@ export class ProductivityBusinessLogic {
    * @returns {Array} Peak time slots
    */
   static getPeakTimes(drawers) {
-    // Mock peak times - would integrate with real flight schedule
-    // This is a simplified version showing distribution
     const totalDrawers = drawers.length;
 
     return [
       {
-        time: '09:00-11:00',
+        time: '06:00-08:00',
+        drawers: Math.round(totalDrawers * 0.20),
+        workers_needed: Math.max(1, Math.ceil((totalDrawers * 0.20) / 25)) // 25 drawers per worker más realista
+      },
+      {
+        time: '10:00-12:00', 
         drawers: Math.round(totalDrawers * 0.30),
-        workers_needed: Math.ceil((totalDrawers * 0.30) / 16) // Assuming 16 drawers per worker per 2 hours
+        workers_needed: Math.max(1, Math.ceil((totalDrawers * 0.30) / 25))
       },
       {
         time: '14:00-16:00',
         drawers: Math.round(totalDrawers * 0.35),
-        workers_needed: Math.ceil((totalDrawers * 0.35) / 16)
+        workers_needed: Math.max(1, Math.ceil((totalDrawers * 0.35) / 25))
       },
       {
         time: '18:00-20:00',
-        drawers: Math.round(totalDrawers * 0.30),
-        workers_needed: Math.ceil((totalDrawers * 0.30) / 16)
+        drawers: Math.round(totalDrawers * 0.15),
+        workers_needed: Math.max(1, Math.ceil((totalDrawers * 0.15) / 25))
       }
     ];
   }
@@ -208,16 +224,16 @@ export class ProductivityBusinessLogic {
    */
   static analyzeEfficiency(drawers, currentStaff, shiftHours = 8) {
     const totalHours = this.getTotalTime(drawers);
-    const optimalStaff = calculateWorkersNeeded(totalHours, shiftHours);
+    const optimalStaff = Math.max(1, Math.ceil(totalHours / shiftHours));
 
     const currentCapacity = currentStaff * shiftHours;
-    const utilization = Math.round((totalHours / currentCapacity) * 100);
+    const utilization = currentCapacity > 0 ? Math.round((totalHours / currentCapacity) * 100) : 0;
 
     return {
       current_staff: currentStaff,
       optimal_staff: optimalStaff,
       difference: currentStaff - optimalStaff,
-      utilization: utilization,
+      utilization: Math.min(100, utilization),
       status: currentStaff === optimalStaff ? 'OPTIMAL' :
               currentStaff > optimalStaff ? 'OVERSTAFFED' : 'UNDERSTAFFED',
       recommendation: this.getStaffingRecommendation(currentStaff, optimalStaff)
